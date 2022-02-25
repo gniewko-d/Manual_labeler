@@ -3,8 +3,8 @@ import datetime
 import cv2
 import pandas as pd 
 frame_counter = 0
-video_file = r"C:\Users\malgo\Desktop\python\video_labeling\finek.mp4"
-#video_file = r"C:\Users\gniew\OneDrive\Pulpit\python\moje\manual_marker\finek_v1.mp4"
+#video_file = r"C:\Users\malgo\Desktop\python\video_labeling\finek.mp4"
+video_file = r"C:\Users\gniew\OneDrive\Pulpit\python\moje\manual_marker\finek_v1.mp4"
 title_window = "Mnimalistic Player"
 cv2.namedWindow(title_window)
 cv2.moveWindow(title_window,750,150)
@@ -21,8 +21,9 @@ cv2.createTrackbar('frame', title_window, 0,int(tots)-1, getFrame)
 
 
 fps = int(cap.get(cv2.CAP_PROP_FPS))
-
+label = None
 frameTime = 50
+start_frame = None
 df = pd.DataFrame(columns = ["Label1"], index = range(1, int(tots) + 1))
 
 while(cap.isOpened()):
@@ -34,14 +35,14 @@ while(cap.isOpened()):
         if keyboard.is_pressed('a'):
             next_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
             current_frame = next_frame - 1
-            previous_frame = current_frame - 5
+            previous_frame = current_frame - 1
             cap.set(cv2.CAP_PROP_POS_FRAMES, previous_frame)
             cv2.setTrackbarPos('frame',title_window, int(previous_frame))
             cv2.waitKey(-1) #wait until any key is pressed
         if keyboard.is_pressed('d'):
              next_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
              current_frame = next_frame - 1
-             next_frame = current_frame + 5
+             next_frame = current_frame + 1
              cap.set(cv2.CAP_PROP_POS_FRAMES, next_frame)
              cv2.setTrackbarPos('frame',title_window, int(next_frame))
              cv2.waitKey(-1) #wait until any key is pressed
@@ -55,15 +56,15 @@ while(cap.isOpened()):
             cv2.waitKey(-1)
         if keyboard.is_pressed('w'):
            cv2.waitKey(frameTime)
-        if keyboard.is_pressed('z'):
-            global start_frame
-            start_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
-        if keyboard.is_pressed('x'):
+        if keyboard.is_pressed('e'):
             global stop_frame
             stop_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+            df.iloc[start_frame-1:stop_frame-1, 0] = label
             cv2.waitKey(-1)
         if keyboard.is_pressed('1'):
-            df.iloc[start_frame-1:stop_frame, 0] = "Test"
+            start_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+            label = "Test"
+            
     else: 
         break
 
