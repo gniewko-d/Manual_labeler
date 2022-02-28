@@ -56,9 +56,10 @@ def step_mode(data, label, video):
 
 
 def end_key(data, label):
-    global start_frame, key_pressed
+    global start_frame, key_pressed, start_frame_freezed
     if key_pressed:
         stop_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+        start_frame_freezed = start_frame
         if stop_frame >= start_frame:
             data.iloc[start_frame-1:stop_frame-1, 0] = label
             cv2.waitKey(-1)
@@ -72,10 +73,16 @@ def delete_mode(data, label):
     current_frames = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
     df.iloc[current_frames-1, 0] = label
     cv2.waitKey(-1)
-
-
-#video_file = r"C:\Users\malgo\Desktop\python\video_labeling\finek.mp4"
-video_file = r"C:\Users\gniew\OneDrive\Pulpit\python\moje\manual_marker\finek_v1.mp4"
+def ctrl_alt_delet(data):
+    global stop_frame, start_frame_freezed
+    if stop_frame >= start_frame_freezed:
+            data.iloc[start_frame_freezed-1:stop_frame, 0] = np.nan
+            cv2.waitKey(-1)
+    elif stop_frame < start_frame_freezed:
+            data.iloc[stop_frame:start_frame_freezed-1, 0] = np.nan
+            cv2.waitKey(-1)
+video_file = r"C:\Users\malgo\Desktop\python\video_labeling\finek.mp4"
+#video_file = r"C:\Users\gniew\OneDrive\Pulpit\python\moje\manual_marker\finek_v1.mp4"
 title_window = "Mnimalistic Player"
 cv2.namedWindow(title_window)
 cv2.moveWindow(title_window,750,150)
@@ -88,7 +95,7 @@ cv2.createTrackbar('frame', title_window, 0,int(tots)-1, getFrame)
 label = None
 frameTime = 50
 start_frame = None
-
+start_frame_freezed = None
 key_pressed = False
 df = pd.DataFrame(columns = ["Label1"], index = range(1, int(tots) + 1))
 print("File exist:", os.path.exists(video_file))
@@ -121,6 +128,8 @@ while(cap.isOpened()):
             step_mode(df, "test",cap)
         if keyboard.is_pressed('g'):
             delete_mode(df, np.nan)
+        if keyboard.is_pressed('h'):
+            ctrl_alt_delet(df)
     else:
         break
 
