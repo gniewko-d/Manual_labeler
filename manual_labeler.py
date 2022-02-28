@@ -1,30 +1,99 @@
-import keyboard 
+import keyboard
 import datetime
 import cv2
-import pandas as pd 
-frame_counter = 0
-#video_file = r"C:\Users\malgo\Desktop\python\video_labeling\finek.mp4"
-video_file = r"C:\Users\gniew\OneDrive\Pulpit\python\moje\manual_marker\finek_v1.mp4"
-title_window = "Mnimalistic Player"
-cv2.namedWindow(title_window)
-cv2.moveWindow(title_window,750,150)
+import pandas as pd
+import os
+import numpy as np
+
+
 def flick(x):
     pass
+
 
 def getFrame(frame_nr):
     global cap
     cap.set(cv2.CAP_PROP_POS_FRAMES, frame_nr)
 
+
+def key_restart(y):
+    global key_pressed
+    key_pressed = y
+
+
+def frame_changer(video, direction, frame_num):
+    next_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+    current_frame = next_frame - 1
+    previous_frame = current_frame - frame_num
+    next_frame = current_frame + frame_num
+    if direction == "back":
+        cap.set(cv2.CAP_PROP_POS_FRAMES, previous_frame)
+        cv2.setTrackbarPos('frame', title_window, previous_frame)
+        cv2.waitKey(-1)  # wait until any key is pressed
+    elif direction == "front":
+        cap.set(cv2.CAP_PROP_POS_FRAMES, next_frame)
+        cv2.setTrackbarPos('frame',title_window, next_frame)
+        cv2.waitKey(-1) #wait un
+
+
+def step_mode(data, label, video):
+    global key_pressed, start_frame
+    if key_pressed:
+        inital = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+        next_frame = inital + 1
+        data.iloc[inital-2, 0] = label
+        video.set(cv2.CAP_PROP_POS_FRAMES, inital)
+        cv2.setTrackbarPos('frame',title_window, inital)
+        cv2.waitKey(0)
+    else:
+        start_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+        inital = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+        next_frame = inital + 1
+        df.iloc[inital-1, 0] = label
+        video.set(cv2.CAP_PROP_POS_FRAMES, next_frame)
+        cv2.setTrackbarPos('frame',title_window, next_frame)
+        key_restart(y = True)
+        cv2.waitKey(0)
+
+
+def end_key(data, label):
+    global start_frame, key_pressed
+    if key_pressed:
+        stop_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+        if stop_frame >= start_frame:
+            data.iloc[start_frame-1:stop_frame-1, 0] = label
+            cv2.waitKey(-1)
+        elif stop_frame < start_frame:
+            data.iloc[stop_frame:start_frame-1, 0] = label
+            cv2.waitKey(-1)
+    else:
+        print("First, set the beginning of range")
+
+def delete_mode(data, label):
+    current_frames = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+    df.iloc[current_frames-1, 0] = label
+    cv2.waitKey(-1)
+
+
+#video_file = r"C:\Users\malgo\Desktop\python\video_labeling\finek.mp4"
+video_file = r"C:\Users\gniew\OneDrive\Pulpit\python\moje\manual_marker\finek_v1.mp4"
+title_window = "Mnimalistic Player"
+cv2.namedWindow(title_window)
+cv2.moveWindow(title_window,750,150)
 cap = cv2.VideoCapture(video_file)
 tots = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 cv2.createTrackbar('frame', title_window, 0,int(tots)-1, getFrame)
 
 
-fps = int(cap.get(cv2.CAP_PROP_FPS))
+
 label = None
 frameTime = 50
 start_frame = None
+
+key_pressed = False
 df = pd.DataFrame(columns = ["Label1"], index = range(1, int(tots) + 1))
+print("File exist:", os.path.exists(video_file))
+
+
 
 while(cap.isOpened()):
     ret, frame = cap.read()
@@ -33,19 +102,9 @@ while(cap.isOpened()):
         current_frames = cap.get(cv2.CAP_PROP_POS_FRAMES)
         cv2.setTrackbarPos('frame',title_window, int(current_frames))
         if keyboard.is_pressed('a'):
-            next_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
-            current_frame = next_frame - 1
-            previous_frame = current_frame - 1
-            cap.set(cv2.CAP_PROP_POS_FRAMES, previous_frame)
-            cv2.setTrackbarPos('frame',title_window, int(previous_frame))
-            cv2.waitKey(-1) #wait until any key is pressed
+            frame_changer(cap, "back", 1)
         if keyboard.is_pressed('d'):
-             next_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
-             current_frame = next_frame - 1
-             next_frame = current_frame + 1
-             cap.set(cv2.CAP_PROP_POS_FRAMES, next_frame)
-             cv2.setTrackbarPos('frame',title_window, int(next_frame))
-             cv2.waitKey(-1) #wait until any key is pressed
+             frame_changer(cap, "front", 1)
         if cv2.waitKey(25) & 0xFF == ord('q'):
             break
         if keyboard.is_pressed('p'):
@@ -57,20 +116,17 @@ while(cap.isOpened()):
         if keyboard.is_pressed('w'):
            cv2.waitKey(frameTime)
         if keyboard.is_pressed('e'):
-            global stop_frame
-            stop_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
-            df.iloc[start_frame-1:stop_frame-1, 0] = label
-            cv2.waitKey(-1)
+            end_key(df, "test")
         if keyboard.is_pressed('1'):
-            start_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
-            label = "Test"
-            
-    else: 
+            step_mode(df, "test",cap)
+        if keyboard.is_pressed('g'):
+            delete_mode(df, np.nan)
+    else:
         break
 
 # When everything done, release 
 # the video capture object
 cap.release()
-   
+
 # Closes all the frames
 cv2.destroyAllWindows()
