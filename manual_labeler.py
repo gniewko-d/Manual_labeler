@@ -10,6 +10,7 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 import easygui
 
+
 video_file = None
 
 class Application:
@@ -24,6 +25,7 @@ class Application:
         global video_file
         video_file = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
         messagebox.showinfo("Information box", "Video uploaded")
+
 
 def flick(x):
     pass
@@ -120,6 +122,11 @@ start_frame_freezed = None
 key_pressed = False
 df = pd.DataFrame(columns = ["Label1"], index = range(1, int(tots) + 1))
 
+delete_mode = np.nan
+df = pd.DataFrame(columns = ["Label1"], index = range(1, int(tots) + 1))
+
+print("File exist:", os.path.exists(video_file))
+
 
 
 
@@ -149,12 +156,18 @@ while(cap.isOpened()):
         if keyboard.is_pressed('e'):
             end_key(df, "test")
         if keyboard.is_pressed('1'):
+
             step_mode(df, "test",cap)
         if keyboard.is_pressed('g'):
             delete_mode(df, np.nan)
         if keyboard.is_pressed('h'):
             ctrl_alt_delet(df)
-    else:
+        if keyboard.is_pressed('g'):
+            test = cap.get(cv2.CAP_PROP_POS_FRAMES)
+            df.iloc[int(test), 0] = delete_mode
+            cv2.waitKey(-1)
+    else: 
+
         break
 
 # When everything done, release 
