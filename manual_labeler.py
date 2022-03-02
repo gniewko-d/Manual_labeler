@@ -4,8 +4,32 @@ import cv2
 import pandas as pd
 import os
 import numpy as np
+import tkinter as tk
+from tkinter import filedialog
+from PIL import Image, ImageTk
 
 
+class Application:
+    def __init__(self):
+        global video_file
+        self.cap = cv2.VideoCapture(video_file)
+        self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        self.current_image = None
+        self.root = tk.Tk()
+        self.root.title("Mnimalistic Player")
+        self.screen = tk.Label(self.root)
+        self.screen.pack(padx=10, pady=10)
+        self.video_stream()
+    def video_stream(self):
+        ret, frame = self.cap.read()
+        if ret:
+            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            self.current_image = Image.fromarray(cv2image)
+            imgtk = ImageTk.PhotoImage(image=self.current_image)
+            self.screen.imgtk = imgtk
+            self.screen.config(image=imgtk)
+        self.root.after(30, self.video_stream)
 def flick(x):
     pass
 
@@ -56,7 +80,7 @@ def step_mode(data, label, video):
 
 
 def end_key(data, label):
-    global start_frame, key_pressed, start_frame_freezed
+    global start_frame, key_pressed, start_frame_freezed, stop_frame
     if key_pressed:
         stop_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
         start_frame_freezed = start_frame
@@ -79,10 +103,12 @@ def ctrl_alt_delet(data):
             data.iloc[start_frame_freezed-1:stop_frame, 0] = np.nan
             cv2.waitKey(-1)
     elif stop_frame < start_frame_freezed:
-            data.iloc[stop_frame:start_frame_freezed-1, 0] = np.nan
-            cv2.waitKey(-1)
-video_file = r"C:\Users\malgo\Desktop\python\video_labeling\finek.mp4"
-#video_file = r"C:\Users\gniew\OneDrive\Pulpit\python\moje\manual_marker\finek_v1.mp4"
+        print("Putin huj")    
+        data.iloc[stop_frame:start_frame_freezed, 0] = np.nan
+        cv2.waitKey(-1)
+
+video_file = filedialog.askopenfilename(title="Select An Video", filetypes= (("gif files", "*.gif"), ("flv files", "*.flv"), ("avi files", "*.avi"), ("amv files", "*.amv"), ("mp4 files", "*.mp4")))
+video_file = r"C:\Users\gniew\OneDrive\Pulpit\python\moje\manual_marker\finek_v1.mp4"
 title_window = "Mnimalistic Player"
 cv2.namedWindow(title_window)
 cv2.moveWindow(title_window,750,150)
@@ -95,6 +121,7 @@ cv2.createTrackbar('frame', title_window, 0,int(tots)-1, getFrame)
 label = None
 frameTime = 50
 start_frame = None
+stop_frame = None
 start_frame_freezed = None
 key_pressed = False
 df = pd.DataFrame(columns = ["Label1"], index = range(1, int(tots) + 1))
@@ -113,7 +140,10 @@ while(cap.isOpened()):
         if keyboard.is_pressed('d'):
              frame_changer(cap, "front", 1)
         if cv2.waitKey(25) & 0xFF == ord('q'):
+            cap.release()
+            cv2.destroyAllWindows()
             break
+            
         if keyboard.is_pressed('p'):
             cv2.waitKey(-1) #wait until any key is pressed
         if keyboard.is_pressed("r"):
@@ -139,3 +169,5 @@ cap.release()
 
 # Closes all the frames
 cv2.destroyAllWindows()
+video_object = Application()
+video_object.root.mainloop()
