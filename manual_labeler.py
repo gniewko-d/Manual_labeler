@@ -5,31 +5,26 @@ import pandas as pd
 import os
 import numpy as np
 import tkinter as tk
+from tkinter import messagebox
 from tkinter import filedialog
 from PIL import Image, ImageTk
+import easygui
 
+video_file = None
 
 class Application:
     def __init__(self):
-        global video_file
-        self.cap = cv2.VideoCapture(video_file)
-        self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        self.current_image = None
         self.root = tk.Tk()
-        self.root.title("Mnimalistic Player")
+        self.root.title("Manual Labeler")
         self.screen = tk.Label(self.root)
         self.screen.pack(padx=10, pady=10)
-        self.video_stream()
-    def video_stream(self):
-        ret, frame = self.cap.read()
-        if ret:
-            cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            self.current_image = Image.fromarray(cv2image)
-            imgtk = ImageTk.PhotoImage(image=self.current_image)
-            self.screen.imgtk = imgtk
-            self.screen.config(image=imgtk)
-        self.root.after(30, self.video_stream)
+        self.open_file = tk.Button(self.root, text = "Open video", command = self.easy_open)
+        self.open_file.pack()
+    def easy_open(self):
+        global video_file
+        video_file = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
+        messagebox.showinfo("Information box", "Video uploaded")
+
 def flick(x):
     pass
 
@@ -106,9 +101,8 @@ def ctrl_alt_delet(data):
         print("Putin huj")    
         data.iloc[stop_frame:start_frame_freezed, 0] = np.nan
         cv2.waitKey(-1)
+video_file = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
 
-video_file = filedialog.askopenfilename(title="Select An Video", filetypes= (("gif files", "*.gif"), ("flv files", "*.flv"), ("avi files", "*.avi"), ("amv files", "*.amv"), ("mp4 files", "*.mp4")))
-video_file = r"C:\Users\gniew\OneDrive\Pulpit\python\moje\manual_marker\finek_v1.mp4"
 title_window = "Mnimalistic Player"
 cv2.namedWindow(title_window)
 cv2.moveWindow(title_window,750,150)
@@ -125,7 +119,7 @@ stop_frame = None
 start_frame_freezed = None
 key_pressed = False
 df = pd.DataFrame(columns = ["Label1"], index = range(1, int(tots) + 1))
-print("File exist:", os.path.exists(video_file))
+
 
 
 
