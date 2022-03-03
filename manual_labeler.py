@@ -35,6 +35,9 @@ class Application:
 
         self.keyboard = tk.Button(self.second_frame, text="Keyboard settings", command = self.keyboard_settings)
         self.keyboard.pack(side=tk.LEFT)
+        
+        self.label_settings = tk.Button(self.second_frame, text="Labels settings")
+        self.label_settings.pack(side=tk.LEFT)
     def easy_open(self):
         global video_file
         video_file = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
@@ -50,11 +53,12 @@ class Application:
     def keyboard_settings(self):
         self.new_root = tk.Toplevel(self.root)
         self.new_root.title("Keyboard_settings")
-        self.first_frame_v1 = tk.Frame(self.root)
+        self.first_frame_v1 = tk.Frame(self.new_root)
         self.first_frame_v1.pack()
-        self.instruction = tk.Text(self.first_frame_v1, height = 1, width = 20)
-        self.text_v1 = "Press on your keyboard:\n a = go back one frame\n d = to move one frame forward\n q = escape from video and save markers\n p = pause the video\n r = restart the video (keep the markers applied)\n w = slow down video (have to be pressed constantly)\n e = frame to which (without it) all the preceding ones will\n be appropriately marked (depends on labels name set by user).\n Start point is set by key 1-10\n key 1-10 = label current frame and jumpt to next one or set the beginning of the range. Next you can move to whatever frame (backward or forward) and there set the end of the range by key e. All frames within that range will be labeled\n g = delete label of current frame\n h = delet last labelled range  "
-        
+        self.instruction = tk.Text(self.first_frame_v1, height = 30, width = 62)
+        self.text_v1 = "Press on your keyboard:\n a = move one frame backward\n d = move one frame forward\n q = escape from video and save markers\n p = pause the video\n r = restart the video (keep the markers applied)\n w = slow down video (have to be pressed constantly)\n e = frame to which (without it) all the preceding ones will\n be appropriately marked (depends on labels name set by user).\n Start point is set by key 1-10\n key 1-10 = label current frame and jumpt to next one or\n set the beginning of the range.\n Next you can move to whatever frame (backward or forward) and\n there set the end of the range by key e.\n All frames within that range will be labeled\n g = delete label of current frame\n h = removes the last labelled range"
+        self.instruction.insert(tk.INSERT, self.text_v1)
+        self.instruction.pack(side=tk.TOP)
 def flick(x):
     pass
 
