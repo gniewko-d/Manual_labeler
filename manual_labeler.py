@@ -6,27 +6,55 @@ import os
 import numpy as np
 import tkinter as tk
 from tkinter import messagebox
-from tkinter import filedialog
 from PIL import Image, ImageTk
 import easygui
 
 
 video_file = None
 
+
 class Application:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Manual Labeler")
-        self.screen = tk.Label(self.root)
-        self.screen.pack(padx=10, pady=10)
-        self.open_file = tk.Button(self.root, text = "Open video", command = self.easy_open)
-        self.open_file.pack()
+        
+        self.first_frame = tk.Frame(self.root)
+        self.first_frame.pack()
+
+        self.open_file = tk.Button(self.first_frame, text = "Open video", command = self.easy_open)
+        self.open_file.pack(side= tk.LEFT)
+        self.text = f"Current video: {None}"
+        self.current_video = tk.Text(self.first_frame, height = 1, width = 20)
+        self.current_video.insert(tk.INSERT, self.text)
+        self.desired_font = tk.font.Font( size = 10, weight = "bold")
+        self.current_video.configure(font = self.desired_font)
+        self.current_video.pack(side=tk.LEFT)
+
+        self.second_frame = tk.Frame(self.root)
+        self.second_frame.pack(side = tk.BOTTOM)
+
+        self.keyboard = tk.Button(self.second_frame, text="Keyboard settings", command = self.keyboard_settings)
+        self.keyboard.pack(side=tk.LEFT)
     def easy_open(self):
         global video_file
         video_file = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
-        messagebox.showinfo("Information box", "Video uploaded")
-
-
+        if video_file != None:
+            messagebox.showinfo("Information box", "Video uploaded")
+            video_title = video_file.split("\\")
+            self.current_video.delete("1.0","end")
+            self.text = f"Current video: {video_title[-1]}"
+            self.current_video.configure(width = len(self.text))
+            self.current_video.insert(tk.INSERT, self.text)
+        else:
+            messagebox.showerror("Error box", "Video was not loaded")
+    def keyboard_settings(self):
+        self.new_root = tk.Toplevel(self.root)
+        self.new_root.title("Keyboard_settings")
+        self.first_frame_v1 = tk.Frame(self.root)
+        self.first_frame_v1.pack()
+        self.instruction = tk.Text(self.first_frame_v1, height = 1, width = 20)
+        self.text_v1 = "Press on your keyboard:\n a = go back one frame\n d = to move one frame forward\n q = escape from video and save markers\n p = pause the video\n r = restart the video (keep the markers applied)\n w = slow down video (have to be pressed constantly)\n e = frame to which (without it) all the preceding ones will\n be appropriately marked (depends on labels name set by user).\n Start point is set by key 1-10\n key 1-10 = label current frame and jumpt to next one or set the beginning of the range. Next you can move to whatever frame (backward or forward) and there set the end of the range by key e. All frames within that range will be labeled\n g = delete label of current frame\n h = delet last labelled range  "
+        
 def flick(x):
     pass
 
@@ -144,7 +172,6 @@ while(cap.isOpened()):
             cap.release()
             cv2.destroyAllWindows()
             break
-            
         if keyboard.is_pressed('p'):
             cv2.waitKey(-1) #wait until any key is pressed
         if keyboard.is_pressed("r"):
@@ -156,7 +183,6 @@ while(cap.isOpened()):
         if keyboard.is_pressed('e'):
             end_key(df, "test")
         if keyboard.is_pressed('1'):
-
             step_mode(df, "test",cap)
         if keyboard.is_pressed('g'):
             delete_mode(df, np.nan)
