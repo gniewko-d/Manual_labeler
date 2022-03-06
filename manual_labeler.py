@@ -55,10 +55,16 @@ class Application:
         self.new_root.title("Keyboard_settings")
         self.first_frame_v1 = tk.Frame(self.new_root)
         self.first_frame_v1.pack()
-        self.instruction = tk.Text(self.first_frame_v1, height = 30, width = 62)
-        self.text_v1 = "Press on your keyboard:\n a = move one frame backward\n d = move one frame forward\n q = escape from video and save markers\n p = pause the video\n r = restart the video (keep the markers applied)\n w = slow down video (have to be pressed constantly)\n e = frame to which (without it) all the preceding ones will\n be appropriately marked (depends on labels name set by user).\n Start point is set by key 1-10\n key 1-10 = label current frame and jumpt to next one or\n set the beginning of the range.\n Next you can move to whatever frame (backward or forward) and\n there set the end of the range by key e.\n All frames within that range will be labeled\n g = delete label of current frame\n h = removes the last labelled range"
-        self.instruction.insert(tk.INSERT, self.text_v1)
-        self.instruction.pack(side=tk.TOP)
+        self.instruction = tk.Text(self.first_frame_v1, height = 30, width = 70)
+        self.text_v1 = "Press on your keyboard:\n a = move one frame backward\n d = move one frame forward\n q = escape from video and save markers\n p = pause the video\n r = restart the video (keep the markers applied)\n w = slow down video (have to be pressed constantly)\n e = frame to which (without it) all the preceding ones will\n\t be appropriately marked (depends on labels name set by user).\n\t Start point is set by key 1-10\n key 1-10 = label current frame and jumpt to next one or\n\t set the beginning of the range.\n\t Next you can move to whatever frame (backward or forward)\n\t and there set the end of the range by key e.\n\t All frames within that range will be labeled\n g = delete label of current frame\n h = removes the last labelled range\n"
+        conteiner = ["~"*70, "~"*70, self.text_v1, "="*70, "="*70]
+        conteiner_v1 = []
+        for i in range(len(conteiner)):
+            self.instruction.insert(tk.INSERT, conteiner[i])
+            self.instruction.pack(side=tk.TOP)
+            self.desired_font_v1 = tk.font.Font( size = 10, weight = "bold")
+            self.instruction.configure(font = self.desired_font_v1)
+            self.instruction.configure
 def flick(x):
     pass
 
