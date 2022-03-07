@@ -10,8 +10,17 @@ from PIL import Image, ImageTk
 import easygui
 
 
-video_file = None
 
+video_file = None
+label_1_name = f"{None}"
+label_2_name = f"{None}"
+label_3_name = f"{None}"
+label_4_name = f"{None}"
+label_5_name = f"{None}"
+label_6_name = f"{None}"
+label_7_name = f"{None}"
+label_8_name = f"{None}"
+label_9_name = f"{None}"
 
 class Application:
     def __init__(self):
@@ -21,7 +30,7 @@ class Application:
         self.first_frame = tk.Frame(self.root)
         self.first_frame.pack()
 
-        self.open_file = tk.Button(self.first_frame, text = "Open video", command = self.easy_open)
+        self.open_file = tk.Button(self.first_frame, text = "Load video", command = self.easy_open)
         self.open_file.pack(side= tk.LEFT)
         self.text = f"Current video: {None}"
         self.current_video = tk.Text(self.first_frame, height = 1, width = 20)
@@ -31,13 +40,20 @@ class Application:
         self.current_video.pack(side=tk.LEFT)
 
         self.second_frame = tk.Frame(self.root)
-        self.second_frame.pack(side = tk.BOTTOM)
+        self.second_frame.pack(side = tk.TOP)
 
         self.keyboard = tk.Button(self.second_frame, text="Keyboard settings", command = self.keyboard_settings)
         self.keyboard.pack(side=tk.LEFT)
         
-        self.label_settings = tk.Button(self.second_frame, text="Labels settings")
-        self.label_settings.pack(side=tk.LEFT)
+        self.label_1_9 = tk.Button(self.second_frame, text="Labels settings", command = self.label_settings)
+        self.label_1_9.pack(side=tk.LEFT)
+        
+        self.third_frame_v1 = tk.Frame(self.root)
+        self.third_frame_v1.pack(side = tk.TOP)
+        
+        self.start_labeling = tk.Button(self.third_frame_v1, text="Start labeling", command = self.start_vido)
+        self.start_labeling.pack(side=tk.LEFT)
+        
     def easy_open(self):
         global video_file
         video_file = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
@@ -56,17 +72,179 @@ class Application:
         self.first_frame_v1 = tk.Frame(self.new_root)
         self.first_frame_v1.pack()
         self.instruction = tk.Text(self.first_frame_v1, height = 30, width = 70)
-        self.text_v1 = "Press on your keyboard:\n a = move one frame backward\n d = move one frame forward\n q = escape from video and save markers\n p = pause the video\n r = restart the video (keep the markers applied)\n w = slow down video (have to be pressed constantly)\n e = frame to which (without it) all the preceding ones will\n\t be appropriately marked (depends on labels name set by user).\n\t Start point is set by key 1-10\n key 1-10 = label current frame and jumpt to next one or\n\t set the beginning of the range.\n\t Next you can move to whatever frame (backward or forward)\n\t and there set the end of the range by key e.\n\t All frames within that range will be labeled\n g = delete label of current frame\n h = removes the last labelled range\n"
+        self.text_v1 = "Press on your keyboard:\n a = move one frame backward\n d = move one frame forward\n q = escape from video and save markers\n p = pause the video\n r = restart the video (keep the markers applied)\n w = slow down video (have to be pressed constantly)\n e = frame to which (without it) all the preceding ones will\n\t be appropriately marked (depends on labels name set by user).\n\t Start point is set by key 1-9\n key 1-9 = label current frame and jumpt to next one or\n\t set the beginning of the range.\n\t Next you can move to whatever frame (backward or forward)\n\t and there set the end of the range by key e.\n\t All frames within that range will be labeled\n g = delete label of current frame\n h = removes the last labelled range\n"
         conteiner = ["~"*70, "~"*70, self.text_v1, "="*70, "="*70]
-        conteiner_v1 = []
+        conteiner_v1 = ["green", "grey", "red", "grey", "green"]
         for i in range(len(conteiner)):
             self.instruction.insert(tk.INSERT, conteiner[i])
             self.instruction.pack(side=tk.TOP)
-            self.desired_font_v1 = tk.font.Font( size = 10, weight = "bold")
-            self.instruction.configure(font = self.desired_font_v1)
-            self.instruction.configure
-def flick(x):
-    pass
+            self.instruction.configure(foreground="green", background= "black")
+    def label_settings(self):
+        global label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name
+        self.new_root_2 = tk.Toplevel(self.root)
+        self.new_root_2.title("Label_settings")
+        
+        self.first_frame_v2 = tk.Frame(self.new_root_2)
+        self.first_frame_v2.pack()
+        
+        self.label_1 = tk.Label(self.first_frame_v2, text = "key_1 label:")
+        self.label_1.pack(side=tk.LEFT)
+        
+        self.label_1_text_box = tk.Text(self.first_frame_v2, height = 1, width = 20)
+        self.label_1_text_box.insert(tk.INSERT, label_1_name)
+        self.label_1_text_box.pack(side=tk.LEFT)
+        
+        self.second_frame_v1 = tk.Frame(self.new_root_2)
+        self.second_frame_v1.pack(side = tk.TOP)
+        
+        self.label_2 = tk.Label(self.second_frame_v1, text = "key_2 label:")
+        self.label_2.pack(side=tk.LEFT)
+        
+        self.label_2_text_box = tk.Text(self.second_frame_v1, height = 1, width = 20)
+        self.label_2_text_box.insert(tk.INSERT, label_2_name)
+        self.label_2_text_box.pack(side=tk.LEFT)
+        
+        self.third_frame = tk.Frame(self.new_root_2)
+        self.third_frame.pack(side = tk.TOP)
+        
+        self.label_3 = tk.Label(self.third_frame, text = "key_3 label:")
+        self.label_3.pack(side=tk.LEFT)
+        
+        self.label_3_text_box = tk.Text(self.third_frame, height = 1, width = 20)
+        self.label_3_text_box.insert(tk.INSERT, label_3_name)
+        self.label_3_text_box.pack(side=tk.LEFT)
+
+        self.fourth_frame = tk.Frame(self.new_root_2)
+        self.fourth_frame.pack(side = tk.TOP)
+        
+        self.label_4 = tk.Label(self.fourth_frame, text = "key_4 label:")
+        self.label_4.pack(side=tk.LEFT)
+        
+        self.label_4_text_box = tk.Text(self.fourth_frame, height = 1, width = 20)
+        self.label_4_text_box.insert(tk.INSERT, label_4_name)
+        self.label_4_text_box.pack(side=tk.LEFT)
+        
+        self.fifth_frame = tk.Frame(self.new_root_2)
+        self.fifth_frame.pack(side = tk.TOP)
+        
+        self.label_5 = tk.Label(self.fifth_frame, text = "key_5 label:")
+        self.label_5.pack(side=tk.LEFT)
+        
+        self.label_5_text_box = tk.Text(self.fifth_frame, height = 1, width = 20)
+        self.label_5_text_box.insert(tk.INSERT, label_5_name)
+        self.label_5_text_box.pack(side=tk.LEFT)
+        
+        self.sixth_frame = tk.Frame(self.new_root_2)
+        self.sixth_frame.pack(side = tk.TOP)
+        
+        self.label_6 = tk.Label(self.sixth_frame, text = "key_6 label:")
+        self.label_6.pack(side=tk.LEFT)
+        
+        self.label_6_text_box = tk.Text(self.sixth_frame, height = 1, width = 20)
+        self.label_6_text_box.insert(tk.INSERT, label_6_name)
+        self.label_6_text_box.pack(side=tk.LEFT)
+        
+        self.seventh_frame = tk.Frame(self.new_root_2)
+        self.seventh_frame.pack(side = tk.TOP)
+        
+        self.label_7 = tk.Label(self.seventh_frame, text = "key_7 label:")
+        self.label_7.pack(side=tk.LEFT)
+        
+        self.label_7_text_box = tk.Text(self.seventh_frame, height = 1, width = 20)
+        self.label_7_text_box.insert(tk.INSERT, label_7_name)
+        self.label_7_text_box.pack(side=tk.LEFT)
+        
+        self.eighth_frame = tk.Frame(self.new_root_2)
+        self.eighth_frame.pack(side = tk.TOP)
+        
+        self.label_8 = tk.Label(self.eighth_frame, text = "key_8 label:")
+        self.label_8.pack(side=tk.LEFT)
+        
+        self.label_8_text_box = tk.Text(self.eighth_frame, height = 1, width = 20)
+        self.label_8_text_box.insert(tk.INSERT, label_8_name)
+        self.label_8_text_box.pack(side=tk.LEFT)
+        
+        self.ninth_frame = tk.Frame(self.new_root_2)
+        self.ninth_frame.pack(side = tk.TOP)
+        
+        self.label_9 = tk.Label(self.ninth_frame, text = "key_9 label:")
+        self.label_9.pack(side=tk.LEFT)
+        
+        self.label_9_text_box = tk.Text(self.ninth_frame, height = 1, width = 20)
+        self.label_9_text_box.insert(tk.INSERT, label_9_name)
+        self.label_9_text_box.pack(side=tk.LEFT)
+        
+        self.submit_frame = tk.Frame(self.new_root_2)
+        self.submit_frame.pack(side = tk.TOP)
+        
+        self.submit = tk.Button(self.submit_frame, text = "Submit", command = self.label_changer)
+        self.submit.pack(side = tk.BOTTOM)
+
+    def label_changer(self):
+        global label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name
+
+        label_1_name = self.label_1_text_box.get("1.0","end")
+        label_2_name = self.label_2_text_box.get("1.0","end")
+        label_3_name = self.label_3_text_box.get("1.0","end")
+        label_4_name = self.label_4_text_box.get("1.0","end")
+        label_5_name = self.label_5_text_box.get("1.0","end")
+        label_6_name = self.label_6_text_box.get("1.0","end")
+        label_7_name = self.label_7_text_box.get("1.0","end")
+        label_8_name = self.label_8_text_box.get("1.0","end")
+        label_9_name = self.label_9_text_box.get("1.0","end")
+    
+    def start_vido(self):
+        global video_file, cap
+        title_window = "Mnimalistic Player"
+        cv2.namedWindow(title_window)
+        cv2.moveWindow(title_window,750,150)
+        cap = cv2.VideoCapture(video_file)
+        tots = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+        cv2.createTrackbar('frame', title_window, 0,int(tots)-1, getFrame)
+        label = None
+        frameTime = 50
+        start_frame = None
+        stop_frame = None
+        start_frame_freezed = None
+        key_pressed = False
+        df = pd.DataFrame(columns = ["Label1"], index = range(1, int(tots) + 1))
+        delete_mode = np.nan
+        while(cap.isOpened()):
+            ret, frame = cap.read()
+            if ret == True:
+                cv2.imshow(title_window, frame)
+                current_frames = cap.get(cv2.CAP_PROP_POS_FRAMES)
+                cv2.setTrackbarPos('frame',title_window, int(current_frames))
+                if keyboard.is_pressed('a'):
+                    frame_changer(cap, "back", 1)
+                if keyboard.is_pressed('d'):
+                    frame_changer(cap, "front", 1)
+                if cv2.waitKey(25) & 0xFF == ord('q'):
+                    cap.release()
+                    cv2.destroyAllWindows()
+                    break
+                if keyboard.is_pressed('p'):
+                    cv2.waitKey(-1) #wait until any key is pressed
+                if keyboard.is_pressed("r"):
+                    cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+                    cv2.setTrackbarPos('frame',title_window, 0)
+                    cv2.waitKey(-1)
+                if keyboard.is_pressed('w'):
+                    cv2.waitKey(frameTime)
+                if keyboard.is_pressed('e'):
+                    end_key(df, "test")
+                if keyboard.is_pressed('1'):
+                    step_mode(df, "test",cap)
+                if keyboard.is_pressed('g'):
+                    delete_mode(df, np.nan)
+                if keyboard.is_pressed('h'):
+                    ctrl_alt_delet(df)
+                if keyboard.is_pressed('g'):
+                    test = cap.get(cv2.CAP_PROP_POS_FRAMES)
+                    df.iloc[int(test), 0] = delete_mode
+                    cv2.waitKey(-1)
+                else:
+                    break
 
 
 def getFrame(frame_nr):
@@ -141,7 +319,7 @@ def ctrl_alt_delet(data):
         print("Putin huj")    
         data.iloc[stop_frame:start_frame_freezed, 0] = np.nan
         cv2.waitKey(-1)
-video_file = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
+
 
 title_window = "Mnimalistic Player"
 cv2.namedWindow(title_window)
