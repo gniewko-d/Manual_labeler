@@ -16,7 +16,7 @@ start_frame = None
 start_frame_freezed = None
 stop_frame = None
 current_label = "test"
-
+x = 5
 label_1_name = f"{None}"
 label_2_name = f"{None}"
 label_3_name = f"{None}"
@@ -61,7 +61,7 @@ class Application:
         
     def easy_open(self):
         global video_file
-        video_file = easygui.fileopenbox(title="Select An Video", filetypes= [".gif", ".flv", ".avi", ".amv", "*.mp4"])
+        video_file = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
         if video_file != None:
             messagebox.showinfo("Information box", "Video uploaded")
             video_title = video_file.split("\\")
@@ -74,6 +74,7 @@ class Application:
     def keyboard_settings(self):
         self.new_root = tk.Toplevel(self.root)
         self.new_root.title("Keyboard_settings")
+
         self.first_frame_v1 = tk.Frame(self.new_root)
         self.first_frame_v1.pack()
         self.instruction = tk.Text(self.first_frame_v1, height = 30, width = 70)
@@ -84,6 +85,12 @@ class Application:
             self.instruction.insert(tk.INSERT, conteiner[i])
             self.instruction.pack(side=tk.TOP)
             self.instruction.configure(foreground="green", background= "black")
+        
+        self.second_frame_v2 = tk.Frame(self.new_root)
+        self.second_frame_v2.pack(side=tk.TOP)
+        
+        self.x_label = tk.Label(self.second_frame_v2, text = "Set value of x (default = 5)", foreground="green", background= "black")
+        self.x_label.pack(side=tk.LEFT)
     def label_settings(self):
         global label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name
         self.new_root_2 = tk.Toplevel(self.root)
@@ -226,8 +233,8 @@ def frame_changer(video, direction, frame_num):
 
 def step_mode(data, label, video):
     global key_pressed, start_frame, current_label
+    current_label = label
     if key_pressed:
-        current_label = label
         inital = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
         next_frame = inital + 1
         data.iloc[inital-2, 0] = label
@@ -270,13 +277,11 @@ def ctrl_alt_delet(data):
             data.iloc[start_frame_freezed-1:stop_frame, 0] = np.nan
             cv2.waitKey(-1)
     elif stop_frame < start_frame_freezed:
-        print("Putin huj")    
         data.iloc[stop_frame:start_frame_freezed, 0] = np.nan
         cv2.waitKey(-1)
 
-xd = None
 # Closes all the frames
-cv2.destroyAllWindows()
+
 video_object = Application()
 video_object.root.mainloop()
 def start_vido1():
