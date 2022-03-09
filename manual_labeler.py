@@ -80,7 +80,7 @@ class Application:
         self.instruction = tk.Text(self.first_frame_v1, height = 30, width = 70)
         self.text_v1 = "Press on your keyboard:\n a = move one frame backward\n d = move one frame forward\n q = escape from video and save markers\n p = pause the video\n r = restart the video (keep the markers applied)\n w = slow down video (have to be pressed constantly)\n e = frame to which (without it) all the preceding ones will\n\t be appropriately marked (depends on labels name set by user).\n\t Start point is set by key 1-9\n key 1-9 = label current frame and jumpt to next one or\n\t set the beginning of the range.\n\t Next you can move to whatever frame (backward or forward)\n\t and there set the end of the range by key e.\n\t All frames within that range will be labeled\n g = delete label of current frame\n h = removes the last labelled range\n"
         conteiner = [""*70, ""*70, self.text_v1, "="*70, "="*70]
-        conteiner_v1 = ["green", "grey", "red", "grey", "green"]
+        
         for i in range(len(conteiner)):
             self.instruction.insert(tk.INSERT, conteiner[i])
             self.instruction.pack(side=tk.TOP)
@@ -89,8 +89,10 @@ class Application:
         self.second_frame_v2 = tk.Frame(self.new_root)
         self.second_frame_v2.pack(side=tk.TOP)
         
-        self.x_label = tk.Label(self.second_frame_v2, text = "Set value of x (default = 5)", foreground="green", background= "black")
+        self.x_label = tk.Label(self.second_frame_v2, text = "Set value of x (default = 5)", foreground="green", background= "black", width = 70)
         self.x_label.pack(side=tk.LEFT)
+        
+    
     def label_settings(self):
         global label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name
         self.new_root_2 = tk.Toplevel(self.root)
