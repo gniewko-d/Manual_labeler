@@ -218,7 +218,7 @@ def key_restart(bool_value, lista_bool, *args):
     for i, j in enumerate(lista_bool):
         if i in args:
             lista_bool[i] = not(bool_value)
-        else:    
+        else:
             lista_bool[i] = bool_value
  
 
@@ -257,7 +257,6 @@ def step_mode(data, label, video, key_pressed):
         df.iloc[inital-1, 0] = label
         video.set(cv2.CAP_PROP_POS_FRAMES, next_frame)
         cv2.setTrackbarPos('frame',title_window, next_frame)
-        key_restart(y = True)
         start_frame_bool = True
         cv2.waitKey(0)
 
@@ -295,7 +294,7 @@ def ctrl_alt_delet(data):
 # Closes all the frames
 
 def start_vido1():
-    global label_1_name, xd, cap, title_window, frameTime, df, fps
+    global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list
     title_window = "Mnimalistic Player"
     cv2.namedWindow(title_window)
     cv2.moveWindow(title_window,750,150)
@@ -318,10 +317,10 @@ def start_vido1():
                     cv2.destroyAllWindows()
                 if keyboard.is_pressed('a'):
                     frame_changer(cap, "back", 1)
-                    key_restart(y = False)
+                    
                 if keyboard.is_pressed('d'):
                     frame_changer(cap, "front", 1)
-                    key_restart(y = False)
+                    
                 if keyboard.is_pressed('p'):
                     cv2.waitKey(-1) #wait until any key is pressed
                 if keyboard.is_pressed("r"):
@@ -334,6 +333,10 @@ def start_vido1():
                     end_key(df, current_label)
                 if keyboard.is_pressed('1'):
                     step_mode(df, label_1_name, cap, key_pressed_list[0])
+                    if key_pressed_list[0] == False:
+                        key_restart(True,key_pressed_list, 1,2,3,4,5,6,7,8)
+                    else:
+                        continue
                 if keyboard.is_pressed('g'):
                     delete_mode(df, np.nan)
                 if keyboard.is_pressed('h'):
