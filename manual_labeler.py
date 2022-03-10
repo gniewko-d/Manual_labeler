@@ -8,15 +8,15 @@ import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 import easygui
+start_frame_bool = False
 
-key_pressed = False
 frameTime = 50
 video_file = None
 start_frame = None
 start_frame_freezed = None
 stop_frame = None
 current_label = "test"
-x = 5
+fps = 5
 label_1_name = f"{None}"
 label_2_name = f"{None}"
 label_3_name = f"{None}"
@@ -27,6 +27,7 @@ label_7_name = f"{None}"
 label_8_name = f"{None}"
 label_9_name = f"{None}"
 
+key_pressed_list = [False, False, False, False, False, False, False, False, False]
 class Application:
     def __init__(self):
         self.root = tk.Tk()
@@ -72,14 +73,15 @@ class Application:
         else:
             messagebox.showerror("Error box", "Video was not loaded")
     def keyboard_settings(self):
+        global fps
         self.new_root = tk.Toplevel(self.root)
         self.new_root.title("Keyboard_settings")
 
         self.first_frame_v1 = tk.Frame(self.new_root)
         self.first_frame_v1.pack()
         self.instruction = tk.Text(self.first_frame_v1, height = 30, width = 70)
-        self.text_v1 = "Press on your keyboard:\n a = move one frame backward\n d = move one frame forward\n q = escape from video and save markers\n p = pause the video\n r = restart the video (keep the markers applied)\n w = slow down video (have to be pressed constantly)\n e = frame to which (without it) all the preceding ones will\n\t be appropriately marked (depends on labels name set by user).\n\t Start point is set by key 1-9\n key 1-9 = label current frame and jumpt to next one or\n\t set the beginning of the range.\n\t Next you can move to whatever frame (backward or forward)\n\t and there set the end of the range by key e.\n\t All frames within that range will be labeled\n g = delete label of current frame\n h = removes the last labelled range\n"
-        conteiner = [""*70, ""*70, self.text_v1, "="*70, "="*70]
+        self.text_v1 = "Press on your keyboard:\n a = move one frame backward\n d = move one frame forward\n q = escape from video and save markers\n p = pause the video\n r = restart the video (keep the markers applied)\n w = slow down video (have to be pressed constantly)\n e = frame to which (without it) all the preceding ones will\n\t be appropriately marked (depends on labels name set by user).\n\t Start point is set by key 1-9\n key 1-9 = label current frame and jumpt to next one or\n\t set the beginning of the range.\n\t Next you can move to whatever frame (backward or forward)\n\t and there set the end of the range by key e.\n\t All frames within that range will be labeled\n g = delete label of current frame\n h = removes the last labelled range\n z = move x (default = 5) frames backward\n c = move x (default = 5) frames forward\n"
+        conteiner = ["~"*70, "~"*70, self.text_v1, "="*70, "="*70]
         
         for i in range(len(conteiner)):
             self.instruction.insert(tk.INSERT, conteiner[i])
@@ -89,10 +91,10 @@ class Application:
         self.second_frame_v2 = tk.Frame(self.new_root)
         self.second_frame_v2.pack(side=tk.TOP)
         
-        self.x_label = tk.Label(self.second_frame_v2, text = "Set value of x (default = 5)", foreground="green", background= "black", width = 70)
+        self.x_label = tk.Label(self.second_frame_v2, text = f"Set value of x (current = {str(fps)}):", foreground="green", background= "black", width = 50, bd = 2)
         self.x_label.pack(side=tk.LEFT)
-        
-    
+        self.x_text = tk.Text(self.second_frame_v2, foreground="green", background= "black", height = 1, width = 20, insertbackground = "white")
+        self.x_text.pack(side=tk.LEFT)
     def label_settings(self):
         global label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name
         self.new_root_2 = tk.Toplevel(self.root)
@@ -195,7 +197,7 @@ class Application:
         self.submit.pack(side = tk.BOTTOM)
 
     def label_changer(self):
-        global label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name
+        global label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name, label_list
 
         label_1_name = self.label_1_text_box.get("1.0", "end")
         label_2_name = self.label_2_text_box.get("1.0", "end")
@@ -206,16 +208,21 @@ class Application:
         label_7_name = self.label_7_text_box.get("1.0", "end")
         label_8_name = self.label_8_text_box.get("1.0", "end")
         label_9_name = self.label_9_text_box.get("1.0", "end")
-
+        label_list = [label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name]
 
 def getFrame(frame_nr):
     global cap
     cap.set(cv2.CAP_PROP_POS_FRAMES, frame_nr)
 
+def key_restart(bool_value, lista_bool, *args):
+    for i, j in enumerate(lista_bool):
+        if i in args:
+            lista_bool[i] = not(bool_value)
+        else:    
+            lista_bool[i] = bool_value
+ 
 
-def key_restart(y):
-    global key_pressed
-    key_pressed = y
+
 
 
 def frame_changer(video, direction, frame_num):
@@ -233,8 +240,8 @@ def frame_changer(video, direction, frame_num):
         cv2.waitKey(-1) #wait un
 
 
-def step_mode(data, label, video):
-    global key_pressed, start_frame, current_label
+def step_mode(data, label, video, key_pressed):
+    global start_frame, current_label, start_frame_bool
     current_label = label
     if key_pressed:
         inital = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
@@ -251,20 +258,22 @@ def step_mode(data, label, video):
         video.set(cv2.CAP_PROP_POS_FRAMES, next_frame)
         cv2.setTrackbarPos('frame',title_window, next_frame)
         key_restart(y = True)
+        start_frame_bool = True
         cv2.waitKey(0)
 
 
 def end_key(data, label):
-    global start_frame, key_pressed, start_frame_freezed, stop_frame
-    if key_pressed:
-        
+    global start_frame, start_frame_freezed, stop_frame, start_frame_bool
+    if start_frame_bool:
         stop_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
         start_frame_freezed = start_frame
         if stop_frame >= start_frame:
             data.iloc[start_frame-1:stop_frame-1, 0] = label
+            start_frame_bool = False
             cv2.waitKey(-1)
         elif stop_frame < start_frame:
             data.iloc[stop_frame:start_frame-1, 0] = label
+            start_frame_bool = False
             cv2.waitKey(-1)
     else:
         print("First, set the beginning of range")
@@ -273,6 +282,7 @@ def delete_mode(data, label):
     current_frames = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
     df.iloc[current_frames-1, 0] = label
     cv2.waitKey(-1)
+
 def ctrl_alt_delet(data):
     global stop_frame, start_frame_freezed
     if stop_frame >= start_frame_freezed:
@@ -284,10 +294,8 @@ def ctrl_alt_delet(data):
 
 # Closes all the frames
 
-video_object = Application()
-video_object.root.mainloop()
 def start_vido1():
-    global label_1_name, xd, cap, title_window, frameTime, df
+    global label_1_name, xd, cap, title_window, frameTime, df, fps
     title_window = "Mnimalistic Player"
     cv2.namedWindow(title_window)
     cv2.moveWindow(title_window,750,150)
@@ -297,7 +305,7 @@ def start_vido1():
         cap = cv2.VideoCapture(video_file)
         tots = cap.get(cv2.CAP_PROP_FRAME_COUNT)
         cv2.createTrackbar('frame', title_window, 0,int(tots)-1, getFrame)
-        df = pd.DataFrame(columns = [label_1_name], index = range(1, int(tots) + 1))
+        df = pd.DataFrame(columns = [label_list], index = range(1, int(tots) + 1))
         while(cap.isOpened()):
             ret, frame = cap.read()
             if ret == True:
@@ -310,8 +318,10 @@ def start_vido1():
                     cv2.destroyAllWindows()
                 if keyboard.is_pressed('a'):
                     frame_changer(cap, "back", 1)
+                    key_restart(y = False)
                 if keyboard.is_pressed('d'):
                     frame_changer(cap, "front", 1)
+                    key_restart(y = False)
                 if keyboard.is_pressed('p'):
                     cv2.waitKey(-1) #wait until any key is pressed
                 if keyboard.is_pressed("r"):
@@ -323,11 +333,18 @@ def start_vido1():
                 if keyboard.is_pressed('e'):
                     end_key(df, current_label)
                 if keyboard.is_pressed('1'):
-                    step_mode(df, label_1_name, cap)
+                    step_mode(df, label_1_name, cap, key_pressed_list[0])
                 if keyboard.is_pressed('g'):
                     delete_mode(df, np.nan)
                 if keyboard.is_pressed('h'):
                     ctrl_alt_delet(df)
+                if keyboard.is_pressed("z"):
+                    frame_changer(cap, "back", fps)
+                if keyboard.is_pressed("c"):
+                    frame_changer(cap, "front", fps)
         xd = df
         cap.release()
         cv2.destroyAllWindows()
+
+video_object = Application()
+video_object.root.mainloop()
