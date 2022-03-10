@@ -295,12 +295,12 @@ def ctrl_alt_delet(data):
 
 def start_vido1():
     global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list
-    title_window = "Mnimalistic Player"
-    cv2.namedWindow(title_window)
-    cv2.moveWindow(title_window,750,150)
     if video_file == None:
         messagebox.showerror("Error box", "Upload the video first ")
     else:
+        title_window = "Mnimalistic Player"
+        cv2.namedWindow(title_window)
+        cv2.moveWindow(title_window,750,150)
         cap = cv2.VideoCapture(video_file)
         tots = cap.get(cv2.CAP_PROP_FRAME_COUNT)
         cv2.createTrackbar('frame', title_window, 0,int(tots)-1, getFrame)
@@ -317,10 +317,10 @@ def start_vido1():
                     cv2.destroyAllWindows()
                 if keyboard.is_pressed('a'):
                     frame_changer(cap, "back", 1)
-                    
+                    key_restart(False,key_pressed_list)
                 if keyboard.is_pressed('d'):
                     frame_changer(cap, "front", 1)
-                    
+                    key_restart(False,key_pressed_list)
                 if keyboard.is_pressed('p'):
                     cv2.waitKey(-1) #wait until any key is pressed
                 if keyboard.is_pressed("r"):
