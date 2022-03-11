@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Mar 11 15:01:40 2022
+
+@author: gniew
+"""
 import keyboard
 import datetime
 import cv2
@@ -8,8 +14,10 @@ import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 import easygui
+import pyautogui
 start_frame_bool = False
-
+previous_column = None
+column = None
 frameTime = 50
 video_file = None
 start_frame = None
@@ -35,7 +43,7 @@ class Application:
         
         self.first_frame = tk.Frame(self.root)
         self.first_frame.pack()
-
+        
         self.open_file = tk.Button(self.first_frame, text = "Load video", command = self.easy_open)
         self.open_file.pack(side= tk.LEFT)
         self.text = f"Current video: {None}"
@@ -44,10 +52,10 @@ class Application:
         self.desired_font = tk.font.Font(size = 10, weight = "bold")
         self.current_video.configure(font = self.desired_font)
         self.current_video.pack(side=tk.LEFT)
-
+        
         self.second_frame = tk.Frame(self.root)
         self.second_frame.pack(side = tk.TOP)
-
+        
         self.keyboard = tk.Button(self.second_frame, text="Keyboard settings", command = self.keyboard_settings)
         self.keyboard.pack(side=tk.LEFT)
         
@@ -59,7 +67,7 @@ class Application:
         
         self.start_labeling = tk.Button(self.third_frame_v1, text="Start labeling", command = start_vido1)
         self.start_labeling.pack(side=tk.LEFT)
-        
+    
     def easy_open(self):
         global video_file
         video_file = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
@@ -76,7 +84,7 @@ class Application:
         global fps
         self.new_root = tk.Toplevel(self.root)
         self.new_root.title("Keyboard_settings")
-
+        
         self.first_frame_v1 = tk.Frame(self.new_root)
         self.first_frame_v1.pack()
         self.instruction = tk.Text(self.first_frame_v1, height = 30, width = 70)
@@ -129,7 +137,7 @@ class Application:
         self.label_3_text_box = tk.Text(self.third_frame, height = 1, width = 20)
         self.label_3_text_box.insert(tk.INSERT, label_3_name)
         self.label_3_text_box.pack(side=tk.LEFT)
-
+        
         self.fourth_frame = tk.Frame(self.new_root_2)
         self.fourth_frame.pack(side = tk.TOP)
         
@@ -195,10 +203,10 @@ class Application:
         
         self.submit = tk.Button(self.submit_frame, text = "Submit", command = self.label_changer)
         self.submit.pack(side = tk.BOTTOM)
-
+    
     def label_changer(self):
         global label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name, label_list
-
+        
         label_1_name = self.label_1_text_box.get("1.0", "end")
         label_2_name = self.label_2_text_box.get("1.0", "end")
         label_3_name = self.label_3_text_box.get("1.0", "end")
@@ -220,7 +228,7 @@ def key_restart(bool_value, lista_bool, *args):
             lista_bool[i] = not(bool_value)
         else:
             lista_bool[i] = bool_value
- 
+
 
 
 
@@ -233,68 +241,83 @@ def frame_changer(video, direction, frame_num):
     if direction == "back":
         cap.set(cv2.CAP_PROP_POS_FRAMES, previous_frame)
         cv2.setTrackbarPos('frame', title_window, previous_frame)
-        cv2.waitKey(-1)  # wait until any key is pressed
+        cv2.waitKey(0)  # wait until any key is pressed
     elif direction == "front":
         cap.set(cv2.CAP_PROP_POS_FRAMES, next_frame)
         cv2.setTrackbarPos('frame',title_window, next_frame)
-        cv2.waitKey(-1) #wait un
+        cv2.waitKey(0) #wait un
 
 
-def step_mode(data, label, video, key_pressed):
-    global start_frame, current_label, start_frame_bool
+def step_mode(data, label, video, key_pressed, column, previous_column):
+    global start_frame, current_label, start_frame_bool, x
     current_label = label
-    if key_pressed:
+    if key_pressed and x == 0 and previous_column < column:
+        start_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
         inital = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
-        next_frame = inital + 1
-        data.iloc[inital-2, 0] = label
-        video.set(cv2.CAP_PROP_POS_FRAMES, inital)
-        cv2.setTrackbarPos('frame',title_window, inital)
+        next_frame = inital
+        data.iloc[inital-1, column] = label
+        video.set(cv2.CAP_PROP_POS_FRAMES, next_frame+1)
+        cv2.setTrackbarPos('frame',title_window, next_frame+1)
+        x += 1 
         cv2.waitKey(0)
-    else:
+    elif key_pressed:
         start_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
         inital = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
         next_frame = inital + 1
-        df.iloc[inital-1, 0] = label
+        data.iloc[inital-2,column] = label
+        video.set(cv2.CAP_PROP_POS_FRAMES, inital)
+        cv2.setTrackbarPos('frame',title_window, inital)
+        cv2.waitKey(0)
+        x += 1 
+        
+    else:
+        x = 0
+        start_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+        inital = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+        next_frame = inital + 1
+        df.iloc[inital-1, column] = label
         video.set(cv2.CAP_PROP_POS_FRAMES, next_frame)
         cv2.setTrackbarPos('frame',title_window, next_frame)
         start_frame_bool = True
+        
         cv2.waitKey(0)
 
 
-def end_key(data, label):
-    global start_frame, start_frame_freezed, stop_frame, start_frame_bool
+def end_key(data, column):
+    global start_frame, start_frame_freezed, stop_frame, start_frame_bool, current_label
     if start_frame_bool:
         stop_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
         start_frame_freezed = start_frame
         if stop_frame >= start_frame:
-            data.iloc[start_frame-1:stop_frame-1, 0] = label
+            data.iloc[start_frame-1:stop_frame-1, column] = current_label
             start_frame_bool = False
             cv2.waitKey(-1)
         elif stop_frame < start_frame:
-            data.iloc[stop_frame:start_frame-1, 0] = label
+            data.iloc[stop_frame:start_frame-1, column] = current_label
             start_frame_bool = False
             cv2.waitKey(-1)
     else:
         print("First, set the beginning of range")
 
-def delete_mode(data, label):
+def delete_mode(data, label, column):
+    
     current_frames = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
-    df.iloc[current_frames-1, 0] = label
+    df.iloc[current_frames-1, column] = label
     cv2.waitKey(-1)
 
 def ctrl_alt_delet(data):
     global stop_frame, start_frame_freezed
     if stop_frame >= start_frame_freezed:
-            data.iloc[start_frame_freezed-1:stop_frame, 0] = np.nan
+            data.iloc[start_frame_freezed-2:stop_frame, column] = np.nan
             cv2.waitKey(-1)
     elif stop_frame < start_frame_freezed:
-        data.iloc[stop_frame:start_frame_freezed, 0] = np.nan
+        data.iloc[stop_frame:start_frame_freezed, column] = np.nan
         cv2.waitKey(-1)
 
 # Closes all the frames
 
 def start_vido1():
-    global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list
+    global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column
     if video_file == None:
         messagebox.showerror("Error box", "Upload the video first ")
     else:
@@ -323,24 +346,96 @@ def start_vido1():
                     key_restart(False,key_pressed_list)
                 if keyboard.is_pressed('p'):
                     cv2.waitKey(-1) #wait until any key is pressed
+                    key_restart(False,key_pressed_list)
                 if keyboard.is_pressed("r"):
                     cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
                     cv2.setTrackbarPos('frame',title_window, 0)
                     cv2.waitKey(-1)
+                    key_restart(False,key_pressed_list)
                 if keyboard.is_pressed('w'):
                     cv2.waitKey(frameTime)
+                    key_restart(False,key_pressed_list)
                 if keyboard.is_pressed('e'):
-                    end_key(df, current_label)
+                    end_key(df, column)
                 if keyboard.is_pressed('1'):
-                    step_mode(df, label_1_name, cap, key_pressed_list[0])
+                    previous_column = column
+                    column = 0
+                    step_mode(df, label_1_name, cap, key_pressed_list[0], column, previous_column)
                     if key_pressed_list[0] == False:
-                        key_restart(True,key_pressed_list, 1,2,3,4,5,6,7,8)
+                        key_restart(True,key_pressed_list)
+                    else:
+                        continue
+                if keyboard.is_pressed('2'):
+                    previous_column = column
+                    column = 1
+                    step_mode(df, label_2_name, cap, key_pressed_list[1], column, previous_column)
+                    if key_pressed_list[1] == False:
+                        key_restart(True, key_pressed_list)
+                    else:
+                        continue
+                        
+                if keyboard.is_pressed('3'):
+                    previous_column = column
+                    column = 2
+                    step_mode(df, label_3_name, cap, key_pressed_list[2], column, previous_column)
+                    if key_pressed_list[2] == False:
+                        key_restart(True,key_pressed_list)
+                    else:
+                        continue
+                if keyboard.is_pressed('4'):
+                    previous_column = column
+                    column = 3
+                    step_mode(df, label_4_name, cap, key_pressed_list[3], column, previous_column)
+                    if key_pressed_list[3] == False:
+                        key_restart(True,key_pressed_list)
+                    else:
+                        continue
+                if keyboard.is_pressed('5'):
+                    previous_column = column
+                    column = 4
+                    step_mode(df, label_5_name, cap, key_pressed_list[4], column, previous_column)
+                    if key_pressed_list[4] == False:
+                        key_restart(True,key_pressed_list)
+                    else:
+                        continue
+                if keyboard.is_pressed('6'):
+                    previous_column = column
+                    column = 5
+                    step_mode(df, label_6_name, cap, key_pressed_list[5], column, previous_column)
+                    if key_pressed_list[5] == False:
+                        key_restart(True,key_pressed_list)
+                    else:
+                        continue
+                if keyboard.is_pressed('7'):
+                    previous_column = column
+                    column = 6
+                    step_mode(df, label_7_name, cap, key_pressed_list[6], column, previous_column)
+                    if key_pressed_list[6] == False:
+                        key_restart(True,key_pressed_list)
+                    else:
+                        continue
+                if keyboard.is_pressed('8'):
+                    previous_column = column
+                    column = 7
+                    step_mode(df, label_8_name, cap, key_pressed_list[7], column, previous_column)
+                    if key_pressed_list[7] == False:
+                        key_restart(True,key_pressed_list)
+                    else:
+                        continue
+                if keyboard.is_pressed('9'):
+                    previous_column = column
+                    column = 8
+                    step_mode(df, label_9_name, cap, key_pressed_list[8], column, previous_column)
+                    if key_pressed_list[8] == False:
+                        key_restart(True,key_pressed_list)
                     else:
                         continue
                 if keyboard.is_pressed('g'):
-                    delete_mode(df, np.nan)
+                    delete_mode(df, np.nan, column)
+                    key_restart(False,key_pressed_list)
                 if keyboard.is_pressed('h'):
                     ctrl_alt_delet(df)
+                    key_restart(False,key_pressed_list)
                 if keyboard.is_pressed("z"):
                     frame_changer(cap, "back", fps)
                 if keyboard.is_pressed("c"):
