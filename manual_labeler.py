@@ -14,7 +14,7 @@ import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 import easygui
-import pyautogui
+
 start_frame_bool = False
 previous_column = None
 column = None
@@ -41,33 +41,38 @@ class Application:
         self.root = tk.Tk()
         self.root.title("Manual Labeler")
         
-        self.first_frame = tk.Frame(self.root)
+        self.first_frame = tk.Frame(self.root, background="#116562", width=400, height = 30)
         self.first_frame.pack()
+        self.first_frame.pack_propagate(0)
         
-        self.open_file = tk.Button(self.first_frame, text = "Load video", command = self.easy_open)
-        self.open_file.pack(side= tk.LEFT)
+        self.open_file = tk.Button(self.first_frame, text = "Load video", command = self.easy_open, background="black", foreground="green", width = 26)
+        self.open_file.pack(side= tk.LEFT, padx=1, pady=1, expand=True, fill='both')
         self.text = f"Current video: {None}"
-        self.current_video = tk.Text(self.first_frame, height = 1, width = 20)
+        self.current_video = tk.Text(self.first_frame, height = 1, width = 16, background="black", foreground="green", insertbackground = "white")
         self.current_video.insert(tk.INSERT, self.text)
-        self.desired_font = tk.font.Font(size = 10, weight = "bold")
+        self.desired_font = tk.font.Font(size = 14)
         self.current_video.configure(font = self.desired_font)
-        self.current_video.pack(side=tk.LEFT)
+        self.current_video.pack(side=tk.RIGHT, padx=1, pady=1, expand=True, fill='both')
         
-        self.second_frame = tk.Frame(self.root)
+        self.second_frame = tk.Frame(self.root, background="#116562", width=400, height = 30)
         self.second_frame.pack(side = tk.TOP)
+        self.second_frame.pack_propagate(0)
         
-        self.keyboard = tk.Button(self.second_frame, text="Keyboard settings", command = self.keyboard_settings)
-        self.keyboard.pack(side=tk.LEFT)
+        self.keyboard = tk.Button(self.second_frame, text="Keyboard settings", command = self.keyboard_settings, background="black", foreground="green", width = 13)
+        self.keyboard.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
         
-        self.label_1_9 = tk.Button(self.second_frame, text="Labels settings", command = self.label_settings)
-        self.label_1_9.pack(side=tk.LEFT)
+        self.label_1_9 = tk.Button(self.second_frame, text="Labels settings", command = self.label_settings, background="black", foreground="green")
+        self.label_1_9.pack(side=tk.RIGHT, padx=1, pady=1, expand=True, fill='both')
         
-        self.third_frame_v1 = tk.Frame(self.root)
+        self.third_frame_v1 = tk.Frame(self.root, background="#116562", width=400, height = 30)
         self.third_frame_v1.pack(side = tk.TOP)
+        self.third_frame_v1.pack_propagate(0)
         
-        self.start_labeling = tk.Button(self.third_frame_v1, text="Start labeling", command = start_vido1)
-        self.start_labeling.pack(side=tk.LEFT)
-    
+        self.start_labeling = tk.Button(self.third_frame_v1, text="Start labeling", command = start_vido1, background="black", foreground="green", width = 15)
+        self.start_labeling.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
+        
+        self.show_df = tk.Button(self.third_frame_v1, text="Show data frame", command = "", background="black", foreground="green")
+        self.show_df.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
     def easy_open(self):
         global video_file
         video_file = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
@@ -85,30 +90,30 @@ class Application:
         self.new_root = tk.Toplevel(self.root)
         self.new_root.title("Keyboard_settings")
         
-        self.first_frame_v1 = tk.Frame(self.new_root)
-        self.first_frame_v1.pack()
+        self.first_frame_v1 = tk.Frame(self.new_root, background="black")
+        self.first_frame_v1.pack(expand=True, fill='both')
         self.instruction = tk.Text(self.first_frame_v1, height = 30, width = 70)
         self.text_v1 = "Press on your keyboard:\n a = move one frame backward\n d = move one frame forward\n q = escape from video and save markers\n p = pause the video\n r = restart the video (keep the markers applied)\n w = slow down video (have to be pressed constantly)\n e = frame to which (without it) all the preceding ones will\n\t be appropriately marked (depends on labels name set by user).\n\t Start point is set by key 1-9\n key 1-9 = label current frame and jumpt to next one or\n\t set the beginning of the range.\n\t Next you can move to whatever frame (backward or forward)\n\t and there set the end of the range by key e.\n\t All frames within that range will be labeled\n g = delete label of current frame\n h = removes the last labelled range\n z = move x (default = 5) frames backward\n c = move x (default = 5) frames forward\n"
         conteiner = ["~"*70, "~"*70, self.text_v1, "="*70, "="*70]
         
         for i in range(len(conteiner)):
             self.instruction.insert(tk.INSERT, conteiner[i])
-            self.instruction.pack(side=tk.TOP)
+            self.instruction.pack(side=tk.TOP, expand=True, fill='both')
             self.instruction.configure(foreground="green", background= "black")
         
         self.second_frame_v2 = tk.Frame(self.new_root)
-        self.second_frame_v2.pack(side=tk.TOP)
+        self.second_frame_v2.pack(side=tk.TOP, expand=True, fill='both')
         
-        self.x_label = tk.Label(self.second_frame_v2, text = f"Set value of x (current = {str(fps)}):", foreground="green", background= "black", width = 50, bd = 2)
-        self.x_label.pack(side=tk.LEFT)
-        self.x_text = tk.Text(self.second_frame_v2, foreground="green", background= "black", height = 1, width = 20, insertbackground = "white")
-        self.x_text.pack(side=tk.LEFT)
+        self.x_label = tk.Label(self.second_frame_v2, text = f"Set value of x (current = {str(fps)}):", foreground="green", background= "black", width = 20, bd = 2)
+        self.x_label.pack(side=tk.LEFT,  expand=True, fill='both')
+        self.x_text = tk.Text(self.second_frame_v2, foreground="green", background= "black", height = 1, width = 52, insertbackground = "white")
+        self.x_text.pack(side=tk.LEFT, expand=True, fill='both')
     def label_settings(self):
         global label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name
         self.new_root_2 = tk.Toplevel(self.root)
         self.new_root_2.title("Label_settings")
         
-        self.first_frame_v2 = tk.Frame(self.new_root_2)
+        self.first_frame_v2 = tk.Frame(self.new_root_2, background="black")
         self.first_frame_v2.pack()
         
         self.label_1 = tk.Label(self.first_frame_v2, text = "key_1 label:")
@@ -217,7 +222,10 @@ class Application:
         label_8_name = self.label_8_text_box.get("1.0", "end")
         label_9_name = self.label_9_text_box.get("1.0", "end")
         label_list = [label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name]
+        messagebox.showinfo("Information box", "Labels added :):):)")
 
+    def draw_table(self):
+        new_root_3 = 
 def getFrame(frame_nr):
     global cap
     cap.set(cv2.CAP_PROP_POS_FRAMES, frame_nr)
@@ -229,9 +237,21 @@ def key_restart(bool_value, lista_bool, *args):
         else:
             lista_bool[i] = bool_value
 
+def draw_label( text, pos, bg_color):
+    font_face = cv2.FONT_HERSHEY_SIMPLEX
+    scale = 0.4
+    color = (0, 0, 0)
+    thickness = cv2.FILLED
+    margin = 2
 
+    txt_size = cv2.getTextSize(text, font_face, scale, thickness)
 
+    end_x = pos[0] + txt_size[0][0] + margin
+    end_y = pos[1] - txt_size[0][1] - margin
 
+    cv2.rectangle(frame, pos, (end_x, end_y), bg_color, thickness)
+    cv2.putText(frame, text, pos, font_face, scale, color, 1, cv2.LINE_AA)
+    cv2.imshow(title_window, frame)
 
 def frame_changer(video, direction, frame_num):
     next_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
@@ -249,7 +269,7 @@ def frame_changer(video, direction, frame_num):
 
 
 def step_mode(data, label, video, key_pressed, column, previous_column):
-    global start_frame, current_label, start_frame_bool, x
+    global start_frame, current_label, start_frame_bool, x, frame
     current_label = label
     if key_pressed and x == 0 and previous_column < column:
         start_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
@@ -279,7 +299,7 @@ def step_mode(data, label, video, key_pressed, column, previous_column):
         video.set(cv2.CAP_PROP_POS_FRAMES, next_frame)
         cv2.setTrackbarPos('frame',title_window, next_frame)
         start_frame_bool = True
-        
+        draw_label(label, (20,20), (255,0,0))
         cv2.waitKey(0)
 
 
@@ -314,10 +334,10 @@ def ctrl_alt_delet(data):
         data.iloc[stop_frame:start_frame_freezed, column] = np.nan
         cv2.waitKey(-1)
 
-# Closes all the frames
+
 
 def start_vido1():
-    global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column
+    global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame
     if video_file == None:
         messagebox.showerror("Error box", "Upload the video first ")
     else:
