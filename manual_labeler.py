@@ -16,6 +16,7 @@ from PIL import Image, ImageTk
 import easygui
 import tkinter.scrolledtext as scrolledtext
 from pandastable import Table
+df_checker = False
 df = None
 start_frame_bool = False
 previous_column = None
@@ -227,8 +228,10 @@ class Application:
         messagebox.showinfo("Information box", "Labels added :):):)")
 
     def draw_table(self):
-        global df
-        print(df)
+        global df, df_checker
+        if df_checker == False:
+            messagebox.showerror("Error box", "TO see your data frame")
+            
         self.new_root_3 = tk.Toplevel(self.root)
         self.new_root_3.title("Labeled frames")
         self.tabel_frame = tk.Frame(self.new_root_3)
@@ -350,7 +353,7 @@ def ctrl_alt_delet(data):
 
 
 def start_vido1():
-    global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame
+    global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker
     if video_file == None:
         messagebox.showerror("Error box", "Upload the video first ")
     else:
@@ -360,7 +363,13 @@ def start_vido1():
         cap = cv2.VideoCapture(video_file)
         tots = cap.get(cv2.CAP_PROP_FRAME_COUNT)
         cv2.createTrackbar('frame', title_window, 0,int(tots)-1, getFrame)
-        df = pd.DataFrame(columns = label_list, index = range(1, int(tots) + 1)).rename('grade')
+        if df_checker == False:
+            df = pd.DataFrame(columns = label_list, index = range(1, int(tots) + 1))
+            df.index.name="Frame No."
+            df["Frame No."] = range(1, int(tots) + 1)
+            df_checker = True
+        else:
+            print("ema ee")
         while(cap.isOpened()):
             ret, frame = cap.read()
             if ret == True:
