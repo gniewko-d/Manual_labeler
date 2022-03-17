@@ -14,7 +14,8 @@ import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 import easygui
-
+from pandastable import Table
+df = None
 start_frame_bool = False
 previous_column = None
 column = None
@@ -71,7 +72,7 @@ class Application:
         self.start_labeling = tk.Button(self.third_frame_v1, text="Start labeling", command = start_vido1, background="black", foreground="green", width = 15)
         self.start_labeling.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
         
-        self.show_df = tk.Button(self.third_frame_v1, text="Show data frame", command = "", background="black", foreground="green")
+        self.show_df = tk.Button(self.third_frame_v1, text="Show data frame", command = self.draw_table, background="black", foreground="green")
         self.show_df.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
     def easy_open(self):
         global video_file
@@ -225,7 +226,15 @@ class Application:
         messagebox.showinfo("Information box", "Labels added :):):)")
 
     def draw_table(self):
-        new_root_3 = 
+        global df
+        print(df)
+        self.new_root_3 = tk.Toplevel(self.root)
+        self.new_root_3.title("Labeled frames")
+        self.tabel_frame = tk.Frame(self.new_root_3)
+        self.tabel_frame.pack(fill='both', expand=True)
+        self.df_text_screen = tk.Text(self.tabel_frame)
+        self.df_text_screen.insert(tk.END, str(df))
+        self.df_text_screen.pack()
 def getFrame(frame_nr):
     global cap
     cap.set(cv2.CAP_PROP_POS_FRAMES, frame_nr)
