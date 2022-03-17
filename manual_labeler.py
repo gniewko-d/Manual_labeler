@@ -14,6 +14,7 @@ import tkinter as tk
 from tkinter import messagebox
 from PIL import Image, ImageTk
 import easygui
+import tkinter.scrolledtext as scrolledtext
 from pandastable import Table
 df = None
 start_frame_bool = False
@@ -213,15 +214,15 @@ class Application:
     def label_changer(self):
         global label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name, label_list
         
-        label_1_name = self.label_1_text_box.get("1.0", "end")
-        label_2_name = self.label_2_text_box.get("1.0", "end")
-        label_3_name = self.label_3_text_box.get("1.0", "end")
-        label_4_name = self.label_4_text_box.get("1.0", "end")
-        label_5_name = self.label_5_text_box.get("1.0", "end")
-        label_6_name = self.label_6_text_box.get("1.0", "end")
-        label_7_name = self.label_7_text_box.get("1.0", "end")
-        label_8_name = self.label_8_text_box.get("1.0", "end")
-        label_9_name = self.label_9_text_box.get("1.0", "end")
+        label_1_name = self.label_1_text_box.get("1.0", "end-1c")
+        label_2_name = self.label_2_text_box.get("1.0", "end-1c")
+        label_3_name = self.label_3_text_box.get("1.0", "end-1c")
+        label_4_name = self.label_4_text_box.get("1.0", "end-1c")
+        label_5_name = self.label_5_text_box.get("1.0", "end-1c")
+        label_6_name = self.label_6_text_box.get("1.0", "end-1c")
+        label_7_name = self.label_7_text_box.get("1.0", "end-1c")
+        label_8_name = self.label_8_text_box.get("1.0", "end-1c")
+        label_9_name = self.label_9_text_box.get("1.0", "end-1c")
         label_list = [label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name]
         messagebox.showinfo("Information box", "Labels added :):):)")
 
@@ -232,9 +233,12 @@ class Application:
         self.new_root_3.title("Labeled frames")
         self.tabel_frame = tk.Frame(self.new_root_3)
         self.tabel_frame.pack(fill='both', expand=True)
-        self.df_text_screen = tk.Text(self.tabel_frame)
-        self.df_text_screen.insert(tk.END, str(df))
-        self.df_text_screen.pack()
+        pt = Table(self.tabel_frame, dataframe=df)
+        pt.show()
+        #self.df_text_screen = scrolledtext.ScrolledText(self.tabel_frame, undo = True)
+        #self.df_text_screen.insert(tk.END, str(df.to_string()))
+        #self.df_text_screen.pack()
+        
 def getFrame(frame_nr):
     global cap
     cap.set(cv2.CAP_PROP_POS_FRAMES, frame_nr)
@@ -356,7 +360,7 @@ def start_vido1():
         cap = cv2.VideoCapture(video_file)
         tots = cap.get(cv2.CAP_PROP_FRAME_COUNT)
         cv2.createTrackbar('frame', title_window, 0,int(tots)-1, getFrame)
-        df = pd.DataFrame(columns = [label_list], index = range(1, int(tots) + 1))
+        df = pd.DataFrame(columns = label_list, index = range(1, int(tots) + 1)).rename('grade')
         while(cap.isOpened()):
             ret, frame = cap.read()
             if ret == True:
