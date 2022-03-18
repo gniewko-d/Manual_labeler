@@ -95,7 +95,7 @@ class Application:
         
         self.first_frame_v1 = tk.Frame(self.new_root, background="black")
         self.first_frame_v1.pack(expand=True, fill='both')
-        self.instruction = tk.Text(self.first_frame_v1, height = 30, width = 70)
+        self.instruction = tk.Text(self.first_frame_v1, height = 23, width = 70)
         self.text_v1 = "Press on your keyboard:\n a = move one frame backward\n d = move one frame forward\n q = escape from video and save markers\n p = pause the video\n r = restart the video (keep the markers applied)\n w = slow down video (have to be pressed constantly)\n e = frame to which (without it) all the preceding ones will\n\t be appropriately marked (depends on labels name set by user).\n\t Start point is set by key 1-9\n key 1-9 = label current frame and jumpt to next one or\n\t set the beginning of the range.\n\t Next you can move to whatever frame (backward or forward)\n\t and there set the end of the range by key e.\n\t All frames within that range will be labeled\n g = delete label of current frame\n h = removes the last labelled range\n z = move x (default = 5) frames backward\n c = move x (default = 5) frames forward\n"
         conteiner = ["~"*70, "~"*70, self.text_v1, "="*70, "="*70]
         
@@ -109,8 +109,12 @@ class Application:
         
         self.x_label = tk.Label(self.second_frame_v2, text = f"Set value of x (current = {str(fps)}):", foreground="green", background= "black", width = 20, bd = 2)
         self.x_label.pack(side=tk.LEFT,  expand=True, fill='both')
-        self.x_text = tk.Text(self.second_frame_v2, foreground="green", background= "black", height = 1, width = 52, insertbackground = "white")
+        self.x_text = tk.Text(self.second_frame_v2, foreground="green", background= "black", height = 1, width = 32, insertbackground = "white")
         self.x_text.pack(side=tk.LEFT, expand=True, fill='both')
+        
+        self.submit_frame_2 = tk.Button(self.second_frame_v2, text= "Submit", width = 20, foreground="green", background= "black", command = "")
+        self.submit_frame_2.pack(side=tk.LEFT, expand=True, fill='both')
+    
     def label_settings(self):
         global label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name
         self.new_root_2 = tk.Toplevel(self.root)
@@ -238,9 +242,10 @@ class Application:
         self.tabel_frame.pack(fill='both', expand=True)
         pt = Table(self.tabel_frame, dataframe=df)
         pt.show()
-        #self.df_text_screen = scrolledtext.ScrolledText(self.tabel_frame, undo = True)
-        #self.df_text_screen.insert(tk.END, str(df.to_string()))
-        #self.df_text_screen.pack()
+    def set_x(self):
+        global fps
+        fps = self.x_text.get("1.0", "end-1c")
+        
         
 def getFrame(frame_nr):
     global cap
