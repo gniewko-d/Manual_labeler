@@ -112,7 +112,7 @@ class Application:
         self.x_text = tk.Text(self.second_frame_v2, foreground="green", background= "black", height = 1, width = 32, insertbackground = "white")
         self.x_text.pack(side=tk.LEFT, expand=True, fill='both')
         
-        self.submit_frame_2 = tk.Button(self.second_frame_v2, text= "Submit", width = 20, foreground="green", background= "black", command = "")
+        self.submit_frame_2 = tk.Button(self.second_frame_v2, text= "Submit", width = 20, foreground="green", background= "black", command = self.set_x)
         self.submit_frame_2.pack(side=tk.LEFT, expand=True, fill='both')
     
     def label_settings(self):
@@ -244,7 +244,7 @@ class Application:
         pt.show()
     def set_x(self):
         global fps
-        fps = self.x_text.get("1.0", "end-1c")
+        fps = int(self.x_text.get("1.0", "end-1c"))
         
         
 def getFrame(frame_nr):
