@@ -238,9 +238,6 @@ class Application:
         self.tabel_frame.pack(fill='both', expand=True)
         pt = Table(self.tabel_frame, dataframe=df)
         pt.show()
-        #self.df_text_screen = scrolledtext.ScrolledText(self.tabel_frame, undo = True)
-        #self.df_text_screen.insert(tk.END, str(df.to_string()))
-        #self.df_text_screen.pack()
         
 def getFrame(frame_nr):
     global cap
@@ -369,11 +366,14 @@ def start_vido1():
             df["Frame No."] = range(1, int(tots) + 1)
             df_checker = True
         else:
-            print("ema ee")
+            messagebox.showinfo("Information box", "Labels uploaded")
         while(cap.isOpened()):
             ret, frame = cap.read()
             if ret == True:
-                cv2.imshow(title_window, frame)
+                draw_label(label_1_name, (20,20), (255,0,0))
+                
+                #cv2.imshow(title_window, frame)
+                
                 current_frames = cap.get(cv2.CAP_PROP_POS_FRAMES)
                 cv2.setTrackbarPos('frame',title_window, int(current_frames))
                 if cv2.waitKey(25) & 0xFF == ord('q'):
