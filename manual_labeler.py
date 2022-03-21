@@ -193,6 +193,7 @@ class Application:
         self.label_7_text_box.insert(tk.INSERT, label_7_name)
         self.label_7_text_box.pack(side=tk.LEFT)
         
+        
         self.eighth_frame = tk.Frame(self.new_root_2, background= "black")
         self.eighth_frame.pack(side = tk.TOP)
         
