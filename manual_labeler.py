@@ -18,6 +18,7 @@ import tkinter.scrolledtext as scrolledtext
 from pandastable import Table
 df_checker = False
 df = None
+frame_to_list = None
 start_frame_bool = False
 previous_column = None
 column = None
@@ -119,103 +120,103 @@ class Application:
         self.x_submit.pack(side=tk.LEFT, expand=True, fill='both')
     def label_settings(self):
         global label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name
-        self.new_root_2 = tk.Toplevel(self.root)
+        self.new_root_2 = tk.Toplevel(self.root, background= "black")
         self.new_root_2.title("Label_settings")
         
         self.first_frame_v2 = tk.Frame(self.new_root_2, background="black")
         self.first_frame_v2.pack()
         
-        self.label_1 = tk.Label(self.first_frame_v2, text = "key_1 label:")
+        self.label_1 = tk.Label(self.first_frame_v2, text = "key_1 label:", foreground="green", background= "black")
         self.label_1.pack(side=tk.LEFT)
         
-        self.label_1_text_box = tk.Text(self.first_frame_v2, height = 1, width = 20)
+        self.label_1_text_box = tk.Text(self.first_frame_v2, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
         self.label_1_text_box.insert(tk.INSERT, label_1_name)
         self.label_1_text_box.pack(side=tk.LEFT)
         
-        self.second_frame_v1 = tk.Frame(self.new_root_2)
+        self.second_frame_v1 = tk.Frame(self.new_root_2, background= "black")
         self.second_frame_v1.pack(side = tk.TOP)
         
-        self.label_2 = tk.Label(self.second_frame_v1, text = "key_2 label:")
+        self.label_2 = tk.Label(self.second_frame_v1, text = "key_2 label:", foreground="green", background= "black")
         self.label_2.pack(side=tk.LEFT)
         
-        self.label_2_text_box = tk.Text(self.second_frame_v1, height = 1, width = 20)
+        self.label_2_text_box = tk.Text(self.second_frame_v1, height = 1, width = 20, foreground="green", background= "black",insertbackground = "white")
         self.label_2_text_box.insert(tk.INSERT, label_2_name)
         self.label_2_text_box.pack(side=tk.LEFT)
         
-        self.third_frame = tk.Frame(self.new_root_2)
+        self.third_frame = tk.Frame(self.new_root_2, background= "black")
         self.third_frame.pack(side = tk.TOP)
         
-        self.label_3 = tk.Label(self.third_frame, text = "key_3 label:")
+        self.label_3 = tk.Label(self.third_frame, text = "key_3 label:", foreground="green", background= "black")
         self.label_3.pack(side=tk.LEFT)
         
-        self.label_3_text_box = tk.Text(self.third_frame, height = 1, width = 20)
+        self.label_3_text_box = tk.Text(self.third_frame, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
         self.label_3_text_box.insert(tk.INSERT, label_3_name)
         self.label_3_text_box.pack(side=tk.LEFT)
         
-        self.fourth_frame = tk.Frame(self.new_root_2)
+        self.fourth_frame = tk.Frame(self.new_root_2, background= "black")
         self.fourth_frame.pack(side = tk.TOP)
         
-        self.label_4 = tk.Label(self.fourth_frame, text = "key_4 label:")
+        self.label_4 = tk.Label(self.fourth_frame, text = "key_4 label:", foreground="green", background= "black")
         self.label_4.pack(side=tk.LEFT)
         
-        self.label_4_text_box = tk.Text(self.fourth_frame, height = 1, width = 20)
+        self.label_4_text_box = tk.Text(self.fourth_frame, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
         self.label_4_text_box.insert(tk.INSERT, label_4_name)
         self.label_4_text_box.pack(side=tk.LEFT)
         
-        self.fifth_frame = tk.Frame(self.new_root_2)
+        self.fifth_frame = tk.Frame(self.new_root_2, background= "black")
         self.fifth_frame.pack(side = tk.TOP)
         
-        self.label_5 = tk.Label(self.fifth_frame, text = "key_5 label:")
+        self.label_5 = tk.Label(self.fifth_frame, text = "key_5 label:", foreground="green", background= "black")
         self.label_5.pack(side=tk.LEFT)
         
-        self.label_5_text_box = tk.Text(self.fifth_frame, height = 1, width = 20)
+        self.label_5_text_box = tk.Text(self.fifth_frame, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
         self.label_5_text_box.insert(tk.INSERT, label_5_name)
         self.label_5_text_box.pack(side=tk.LEFT)
         
-        self.sixth_frame = tk.Frame(self.new_root_2)
+        self.sixth_frame = tk.Frame(self.new_root_2, background= "black")
         self.sixth_frame.pack(side = tk.TOP)
         
-        self.label_6 = tk.Label(self.sixth_frame, text = "key_6 label:")
+        self.label_6 = tk.Label(self.sixth_frame, text = "key_6 label:", foreground="green", background= "black")
         self.label_6.pack(side=tk.LEFT)
         
-        self.label_6_text_box = tk.Text(self.sixth_frame, height = 1, width = 20)
+        self.label_6_text_box = tk.Text(self.sixth_frame, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
         self.label_6_text_box.insert(tk.INSERT, label_6_name)
         self.label_6_text_box.pack(side=tk.LEFT)
         
-        self.seventh_frame = tk.Frame(self.new_root_2)
+        self.seventh_frame = tk.Frame(self.new_root_2, background= "black")
         self.seventh_frame.pack(side = tk.TOP)
         
-        self.label_7 = tk.Label(self.seventh_frame, text = "key_7 label:")
+        self.label_7 = tk.Label(self.seventh_frame, text = "key_7 label:", foreground="green", background= "black")
         self.label_7.pack(side=tk.LEFT)
         
-        self.label_7_text_box = tk.Text(self.seventh_frame, height = 1, width = 20)
+        self.label_7_text_box = tk.Text(self.seventh_frame, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
         self.label_7_text_box.insert(tk.INSERT, label_7_name)
         self.label_7_text_box.pack(side=tk.LEFT)
         
-        self.eighth_frame = tk.Frame(self.new_root_2)
+        self.eighth_frame = tk.Frame(self.new_root_2, background= "black")
         self.eighth_frame.pack(side = tk.TOP)
         
-        self.label_8 = tk.Label(self.eighth_frame, text = "key_8 label:")
+        self.label_8 = tk.Label(self.eighth_frame, text = "key_8 label:", foreground="green", background= "black")
         self.label_8.pack(side=tk.LEFT)
         
-        self.label_8_text_box = tk.Text(self.eighth_frame, height = 1, width = 20)
+        self.label_8_text_box = tk.Text(self.eighth_frame, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
         self.label_8_text_box.insert(tk.INSERT, label_8_name)
         self.label_8_text_box.pack(side=tk.LEFT)
         
-        self.ninth_frame = tk.Frame(self.new_root_2)
+        self.ninth_frame = tk.Frame(self.new_root_2, background= "black")
         self.ninth_frame.pack(side = tk.TOP)
         
-        self.label_9 = tk.Label(self.ninth_frame, text = "key_9 label:")
+        self.label_9 = tk.Label(self.ninth_frame, text = "key_9 label:", foreground="green", background= "black")
         self.label_9.pack(side=tk.LEFT)
         
-        self.label_9_text_box = tk.Text(self.ninth_frame, height = 1, width = 20)
+        self.label_9_text_box = tk.Text(self.ninth_frame, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
         self.label_9_text_box.insert(tk.INSERT, label_9_name)
         self.label_9_text_box.pack(side=tk.LEFT)
         
-        self.submit_frame = tk.Frame(self.new_root_2)
+        self.submit_frame = tk.Frame(self.new_root_2, background= "black")
         self.submit_frame.pack(side = tk.TOP)
         
-        self.submit = tk.Button(self.submit_frame, text = "Submit", command = self.label_changer)
+        self.submit = tk.Button(self.submit_frame, text = "Submit", command = self.label_changer, foreground="green", background= "black")
         self.submit.pack(side = tk.BOTTOM)
     
     def label_changer(self):
@@ -289,10 +290,12 @@ def frame_changer(video, direction, frame_num):
         cap.set(cv2.CAP_PROP_POS_FRAMES, next_frame)
         cv2.setTrackbarPos('frame',title_window, next_frame)
         cv2.waitKey(0) #wait un
-
+def add_to_list(frame, list_of_labels):
+    if frame not in list_of_labels:
+        list_of_labels.append(frame)
 
 def step_mode(data, label, video, key_pressed, column, previous_column):
-    global start_frame, current_label, start_frame_bool, x, frame
+    global start_frame, current_label, start_frame_bool, x, frame, frame_to_list
     current_label = label
     if key_pressed and x == 0 and previous_column < column:
         start_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
@@ -302,6 +305,7 @@ def step_mode(data, label, video, key_pressed, column, previous_column):
         video.set(cv2.CAP_PROP_POS_FRAMES, next_frame+1)
         cv2.setTrackbarPos('frame',title_window, next_frame+1)
         x += 1 
+        frame_to_list = inital-1
         cv2.waitKey(0)
     elif key_pressed:
         start_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
@@ -310,6 +314,7 @@ def step_mode(data, label, video, key_pressed, column, previous_column):
         data.iloc[inital-2,column] = label
         video.set(cv2.CAP_PROP_POS_FRAMES, inital)
         cv2.setTrackbarPos('frame',title_window, inital)
+        frame_to_list = inital-1
         cv2.waitKey(0)
         x += 1 
         
@@ -322,6 +327,7 @@ def step_mode(data, label, video, key_pressed, column, previous_column):
         video.set(cv2.CAP_PROP_POS_FRAMES, next_frame)
         cv2.setTrackbarPos('frame',title_window, next_frame)
         start_frame_bool = True
+        frame_to_list = inital
         draw_label(label, (20,20), (255,0,0))
         cv2.waitKey(0)
 
@@ -380,12 +386,12 @@ def start_vido1():
         while(cap.isOpened()):
             ret, frame = cap.read()
             if ret == True:
-                draw_label(label_1_name, (20,20), (255,0,0))
+                #draw_label(label_1_name, (20,20), (255,0,0))
                 
-                #cv2.imshow(title_window, frame)
-                print(frame)
+                cv2.imshow(title_window, frame)
+               
                 current_frames = cap.get(cv2.CAP_PROP_POS_FRAMES)
-                print(current_frames)
+               if current_frames in 
                 cv2.setTrackbarPos('frame',title_window, int(current_frames))
                 if cv2.waitKey(25) & 0xFF == ord('q'):
                     break
@@ -414,6 +420,7 @@ def start_vido1():
                     previous_column = column
                     column = 0
                     step_mode(df, label_1_name, cap, key_pressed_list[0], column, previous_column)
+                    add_to_list( frame_to_list, label_1_list)
                     if key_pressed_list[0] == False:
                         key_restart(True,key_pressed_list)
                     else:
