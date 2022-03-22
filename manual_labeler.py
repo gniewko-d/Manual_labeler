@@ -40,7 +40,14 @@ label_8_name = f"{None}"
 label_9_name = f"{None}"
 
 label_1_list = []
-
+label_2_list = []
+label_3_list = []
+label_4_list = []
+label_5_list = []
+label_6_list = []
+label_7_list = []
+label_8_list = []
+label_9_list = []
 
 key_pressed_list = [False, False, False, False, False, False, False, False, False]
 class Application:
@@ -262,7 +269,7 @@ def key_restart(bool_value, lista_bool, *args):
         else:
             lista_bool[i] = bool_value
 
-def draw_label( text, pos, bg_color):
+def draw_label(text, pos, bg_color):
     font_face = cv2.FONT_HERSHEY_SIMPLEX
     scale = 0.4
     color = (0, 0, 0)
@@ -276,7 +283,7 @@ def draw_label( text, pos, bg_color):
 
     cv2.rectangle(frame, pos, (end_x, end_y), bg_color, thickness)
     cv2.putText(frame, text, pos, font_face, scale, color, 1, cv2.LINE_AA)
-    cv2.imshow(title_window, frame)
+    #cv2.imshow(title_window, frame)
 
 def frame_changer(video, direction, frame_num):
     next_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
@@ -367,7 +374,7 @@ def ctrl_alt_delet(data):
 
 
 def start_vido1():
-    global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker
+    global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list
     if video_file == None:
         messagebox.showerror("Error box", "Upload the video first ")
     else:
@@ -387,12 +394,14 @@ def start_vido1():
         while(cap.isOpened()):
             ret, frame = cap.read()
             if ret == True:
-                #draw_label(label_1_name, (20,20), (255,0,0))
+                current_frames = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+                if current_frames in label_1_list:
+                    draw_label(label_1_name, (20,20), (255,0,0))
                 
-                cv2.imshow(title_window, frame)
-               
+                    cv2.imshow(title_window, frame)
+                else:
+                    cv2.imshow(title_window, frame)
                 current_frames = cap.get(cv2.CAP_PROP_POS_FRAMES)
-               if current_frames in 
                 cv2.setTrackbarPos('frame',title_window, int(current_frames))
                 if cv2.waitKey(25) & 0xFF == ord('q'):
                     break
