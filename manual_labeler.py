@@ -284,7 +284,7 @@ def draw_label(text, pos, bg_color):
 
     cv2.rectangle(frame, pos, (end_x, end_y), bg_color, thickness)
     cv2.putText(frame, text, pos, font_face, scale, color, 1, cv2.LINE_AA)
-    #cv2.imshow(title_window, frame)
+
 
 def frame_changer(video, direction, frame_num):
     next_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
@@ -327,6 +327,7 @@ def step_mode(data, label, video, key_pressed, column, previous_column):
         cv2.waitKey(0)
         x += 1 
         
+        
     else:
         x = 0
         start_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
@@ -342,16 +343,19 @@ def step_mode(data, label, video, key_pressed, column, previous_column):
 
 
 def end_key(data, column):
-    global start_frame, start_frame_freezed, stop_frame, start_frame_bool, current_label
+    global start_frame, start_frame_freezed, stop_frame, start_frame_bool, current_label, label_1_list
+
     if start_frame_bool:
         stop_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
         start_frame_freezed = start_frame
         if stop_frame >= start_frame:
             data.iloc[start_frame-1:stop_frame-1, column] = current_label
+            x = [label_1_list.append(i) for i in range(start_frame, stop_frame) if i not in label_1_list]
             start_frame_bool = False
             cv2.waitKey(-1)
         elif stop_frame < start_frame:
             data.iloc[stop_frame:start_frame-1, column] = current_label
+            y = [label_1_list.append(i) for i in range(stop_frame, start_frame) if i not in label_1_list]
             start_frame_bool = False
             cv2.waitKey(-1)
     else:
@@ -398,7 +402,7 @@ def start_vido1():
                 current_frames = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
                 if current_frames in label_1_list and key_label_controler[0] == False:
                     draw_label(label_1_name, (20,20), (255,0,0))
-                elif (current_frames in label_1_list_key_a or current_frames in label_1_list) and key_label_controler[0] == True:
+                elif  current_frames in label_1_list and key_label_controler[0] == True:
                     cv2.imshow(title_window, frame)
                     key_restart(False ,key_label_controler)
                 else:
@@ -440,7 +444,6 @@ def start_vido1():
                     column = 0
                     step_mode(df, label_1_name, cap, key_pressed_list[0], column, previous_column)
                     add_to_list( frame_to_list, label_1_list)
-                    #label_1_list_key_a = [i + 2 for i in label_1_list]
                     if key_pressed_list[0] == False:
                         key_restart(True,key_pressed_list)
                     else:
