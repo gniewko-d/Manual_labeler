@@ -22,7 +22,7 @@ frame_to_list = None
 start_frame_bool = False
 previous_column = None
 column = None
-frameTime = 50
+frameTime = 500
 video_file = None
 start_frame = None
 start_frame_freezed = None
@@ -50,6 +50,7 @@ label_8_list = []
 label_9_list = []
 
 key_pressed_list = [False, False, False, False, False, False, False, False, False]
+key_label_controler = [False]
 class Application:
     def __init__(self):
         self.root = tk.Tk()
@@ -335,8 +336,8 @@ def step_mode(data, label, video, key_pressed, column, previous_column):
         video.set(cv2.CAP_PROP_POS_FRAMES, next_frame)
         cv2.setTrackbarPos('frame',title_window, next_frame)
         start_frame_bool = True
-        frame_to_list = inital
-        draw_label(label, (20,20), (255,0,0))
+        frame_to_list = inital 
+        
         cv2.waitKey(0)
 
 
@@ -374,7 +375,7 @@ def ctrl_alt_delet(data):
 
 
 def start_vido1():
-    global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list
+    global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a
     if video_file == None:
         messagebox.showerror("Error box", "Upload the video first ")
     else:
@@ -395,24 +396,32 @@ def start_vido1():
             ret, frame = cap.read()
             if ret == True:
                 current_frames = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
-                if current_frames in label_1_list:
+                if current_frames in label_1_list and key_label_controler[0] == False:
                     draw_label(label_1_name, (20,20), (255,0,0))
-                
+                elif (current_frames in label_1_list_key_a or current_frames in label_1_list) and key_label_controler[0] == True:
                     cv2.imshow(title_window, frame)
+                    key_restart(False ,key_label_controler)
                 else:
                     cv2.imshow(title_window, frame)
-                current_frames = cap.get(cv2.CAP_PROP_POS_FRAMES)
+                
+                cv2.imshow(title_window, frame)
+                
                 cv2.setTrackbarPos('frame',title_window, int(current_frames))
                 if cv2.waitKey(25) & 0xFF == ord('q'):
                     break
                     cap.release()
                     cv2.destroyAllWindows()
                 if keyboard.is_pressed('a'):
+                    key_restart(True ,key_label_controler)
+                    
                     frame_changer(cap, "back", 1)
                     key_restart(False,key_pressed_list)
+                 
                 if keyboard.is_pressed('d'):
                     frame_changer(cap, "front", 1)
                     key_restart(False,key_pressed_list)
+                    key_restart(False ,key_label_controler)
+                    
                 if keyboard.is_pressed('p'):
                     cv2.waitKey(-1) #wait until any key is pressed
                     key_restart(False,key_pressed_list)
@@ -431,6 +440,7 @@ def start_vido1():
                     column = 0
                     step_mode(df, label_1_name, cap, key_pressed_list[0], column, previous_column)
                     add_to_list( frame_to_list, label_1_list)
+                    #label_1_list_key_a = [i + 2 for i in label_1_list]
                     if key_pressed_list[0] == False:
                         key_restart(True,key_pressed_list)
                     else:
@@ -508,8 +518,10 @@ def start_vido1():
                     key_restart(False,key_pressed_list)
                 if keyboard.is_pressed("z"):
                     frame_changer(cap, "back", fps)
+                    key_restart(True ,key_label_controler)
                 if keyboard.is_pressed("c"):
                     frame_changer(cap, "front", fps)
+                    key_restart(True ,key_label_controler)
         xd = df
         cap.release()
         cv2.destroyAllWindows()
