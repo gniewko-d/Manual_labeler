@@ -29,6 +29,7 @@ start_frame_freezed = None
 stop_frame = None
 current_label = "test"
 fps = 5
+current_label_list = "test1"
 label_1_name = f"{None}"
 label_2_name = f"{None}"
 label_3_name = f"{None}"
@@ -303,9 +304,10 @@ def add_to_list(frame, list_of_labels):
     if frame not in list_of_labels:
         list_of_labels.append(frame)
 
-def step_mode(data, label, video, key_pressed, column, previous_column):
-    global start_frame, current_label, start_frame_bool, x, frame, frame_to_list
+def step_mode(data, label, video, key_pressed, column, previous_column, list_of_frames):
+    global start_frame, current_label, start_frame_bool, x, frame, frame_to_list, current_label_list
     current_label = label
+    current_label_list = list_of_frames
     if key_pressed and x == 0 and previous_column < column:
         start_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
         inital = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
@@ -343,23 +345,22 @@ def step_mode(data, label, video, key_pressed, column, previous_column):
 
 
 def end_key(data, column):
-    global start_frame, start_frame_freezed, stop_frame, start_frame_bool, current_label, label_1_list
-
+    global start_frame, start_frame_freezed, stop_frame, start_frame_bool, current_label, current_label_list
     if start_frame_bool:
         stop_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
         start_frame_freezed = start_frame
         if stop_frame >= start_frame:
             data.iloc[start_frame-1:stop_frame-1, column] = current_label
-            x = [label_1_list.append(i) for i in range(start_frame, stop_frame) if i not in label_1_list]
+            x = [current_label_list.append(i) for i in range(start_frame, stop_frame) if i not in current_label_list]
             start_frame_bool = False
             cv2.waitKey(-1)
         elif stop_frame < start_frame:
             data.iloc[stop_frame:start_frame-1, column] = current_label
-            y = [label_1_list.append(i) for i in range(stop_frame, start_frame) if i not in label_1_list]
+            y = [current_label_list.append(i) for i in range(stop_frame+1, start_frame) if i not in current_label_list]
             start_frame_bool = False
             cv2.waitKey(-1)
     else:
-        print("First, set the beginning of range")
+        messagebox.showerror("Error box", "First, set the beginning of range")
 
 def delete_mode(data, label, column):
     
@@ -381,7 +382,7 @@ def ctrl_alt_delet(data):
 def start_vido1():
     global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a
     if video_file == None:
-        messagebox.showerror("Error box", "Upload the video first ")
+        messagebox.showerror("Error box", "Upload the video first")
     else:
         title_window = "Mnimalistic Player"
         cv2.namedWindow(title_window)
@@ -401,10 +402,27 @@ def start_vido1():
             if ret == True:
                 current_frames = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
                 if current_frames in label_1_list and key_label_controler[0] == False:
-                    draw_label(label_1_name, (20,20), (255,0,0))
-                elif  current_frames in label_1_list and key_label_controler[0] == True:
+                    draw_label(label_1_name, (10,20), (255,0,0))
+                if current_frames in label_2_list and key_label_controler[0] == False:
+                    draw_label(label_2_name, (10,40), (0,0,255))
+                if current_frames in label_3_list and key_label_controler[0] == False:
+                    draw_label(label_3_name, (10,60), (0,102,0))
+                if current_frames in label_4_list and key_label_controler[0] == False:
+                    draw_label(label_4_name, (10,80), (204,0,102))
+                if current_frames in label_5_list and key_label_controler[0] == False:
+                    draw_label(label_5_name, (10,100), (153,153,255))
+                if current_frames in label_6_list and key_label_controler[0] == False:
+                    draw_label(label_6_name, (10,120), (255,255,153))
+                if current_frames in label_7_list and key_label_controler[0] == False:
+                    draw_label(label_7_name, (10,140), (0,128,255))
+                if current_frames in label_8_list and key_label_controler[0] == False:
+                    draw_label(label_8_name, (10,160), (153,153,0))
+                if current_frames in label_9_list and key_label_controler[0] == False:
+                    draw_label(label_9_name, (10,180), (128,128,128))
+                elif current_frames in label_1_list and key_label_controler[0] == True:
                     cv2.imshow(title_window, frame)
                     key_restart(False ,key_label_controler)
+                
                 else:
                     cv2.imshow(title_window, frame)
                 
@@ -442,7 +460,7 @@ def start_vido1():
                 if keyboard.is_pressed('1'):
                     previous_column = column
                     column = 0
-                    step_mode(df, label_1_name, cap, key_pressed_list[0], column, previous_column)
+                    step_mode(df, label_1_name, cap, key_pressed_list[0], column, previous_column, label_1_list)
                     add_to_list( frame_to_list, label_1_list)
                     if key_pressed_list[0] == False:
                         key_restart(True,key_pressed_list)
@@ -451,7 +469,8 @@ def start_vido1():
                 if keyboard.is_pressed('2'):
                     previous_column = column
                     column = 1
-                    step_mode(df, label_2_name, cap, key_pressed_list[1], column, previous_column)
+                    step_mode(df, label_2_name, cap, key_pressed_list[1], column, previous_column, label_2_list)
+                    add_to_list( frame_to_list, label_2_list)
                     if key_pressed_list[1] == False:
                         key_restart(True, key_pressed_list)
                     else:
@@ -460,7 +479,8 @@ def start_vido1():
                 if keyboard.is_pressed('3'):
                     previous_column = column
                     column = 2
-                    step_mode(df, label_3_name, cap, key_pressed_list[2], column, previous_column)
+                    step_mode(df, label_3_name, cap, key_pressed_list[2], column, previous_column, label_3_list)
+                    add_to_list( frame_to_list, label_3_list)
                     if key_pressed_list[2] == False:
                         key_restart(True,key_pressed_list)
                     else:
@@ -468,7 +488,8 @@ def start_vido1():
                 if keyboard.is_pressed('4'):
                     previous_column = column
                     column = 3
-                    step_mode(df, label_4_name, cap, key_pressed_list[3], column, previous_column)
+                    step_mode(df, label_4_name, cap, key_pressed_list[3], column, previous_column, label_4_list)
+                    add_to_list( frame_to_list, label_4_list)
                     if key_pressed_list[3] == False:
                         key_restart(True,key_pressed_list)
                     else:
@@ -476,7 +497,8 @@ def start_vido1():
                 if keyboard.is_pressed('5'):
                     previous_column = column
                     column = 4
-                    step_mode(df, label_5_name, cap, key_pressed_list[4], column, previous_column)
+                    step_mode(df, label_5_name, cap, key_pressed_list[4], column, previous_column, label_5_list)
+                    add_to_list( frame_to_list, label_5_list)
                     if key_pressed_list[4] == False:
                         key_restart(True,key_pressed_list)
                     else:
@@ -484,7 +506,8 @@ def start_vido1():
                 if keyboard.is_pressed('6'):
                     previous_column = column
                     column = 5
-                    step_mode(df, label_6_name, cap, key_pressed_list[5], column, previous_column)
+                    step_mode(df, label_6_name, cap, key_pressed_list[5], column, previous_column, label_6_list)
+                    add_to_list( frame_to_list, label_6_list)
                     if key_pressed_list[5] == False:
                         key_restart(True,key_pressed_list)
                     else:
@@ -492,7 +515,8 @@ def start_vido1():
                 if keyboard.is_pressed('7'):
                     previous_column = column
                     column = 6
-                    step_mode(df, label_7_name, cap, key_pressed_list[6], column, previous_column)
+                    step_mode(df, label_7_name, cap, key_pressed_list[6], column, previous_column, label_7_list)
+                    add_to_list( frame_to_list, label_7_list)
                     if key_pressed_list[6] == False:
                         key_restart(True,key_pressed_list)
                     else:
@@ -500,7 +524,8 @@ def start_vido1():
                 if keyboard.is_pressed('8'):
                     previous_column = column
                     column = 7
-                    step_mode(df, label_8_name, cap, key_pressed_list[7], column, previous_column)
+                    step_mode(df, label_8_name, cap, key_pressed_list[7], column, previous_column, label_8_list)
+                    add_to_list( frame_to_list, label_8_list)
                     if key_pressed_list[7] == False:
                         key_restart(True,key_pressed_list)
                     else:
@@ -508,7 +533,8 @@ def start_vido1():
                 if keyboard.is_pressed('9'):
                     previous_column = column
                     column = 8
-                    step_mode(df, label_9_name, cap, key_pressed_list[8], column, previous_column)
+                    step_mode(df, label_9_name, cap, key_pressed_list[8], column, previous_column, label_9_list)
+                    add_to_list( frame_to_list, label_9_list)
                     if key_pressed_list[8] == False:
                         key_restart(True,key_pressed_list)
                     else:
