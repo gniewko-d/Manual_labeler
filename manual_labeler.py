@@ -30,6 +30,7 @@ stop_frame = None
 current_label = "test"
 fps = 5
 current_label_list = "test1"
+img = cv2.imread("C:\\Users\\malgo\\Desktop\\python\\video_labeling\\image_v1.png")
 label_1_name = f"{None}"
 label_2_name = f"{None}"
 label_3_name = f"{None}"
