@@ -30,7 +30,7 @@ stop_frame = None
 current_label = "test"
 fps = 5
 current_label_list = "test1"
-img = cv2.imread("C:\\Users\\malgo\\Desktop\\python\\video_labeling\\image_v1.png")
+#img = cv2.imread("C:\\Users\\malgo\\Desktop\\python\\video_labeling\\image_v1.png")
 label_1_name = f"{None}"
 label_2_name = f"{None}"
 label_3_name = f"{None}"
@@ -90,6 +90,13 @@ class Application:
         
         self.show_df = tk.Button(self.third_frame_v1, text="Show data frame", command = self.draw_table, background="black", foreground="green")
         self.show_df.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
+        
+        self.fourth_frame_v1 = tk.Frame(self.root, background="#116562", width=400, height = 30)
+        self.fourth_frame_v1.pack(side = tk.TOP)
+        self.fourth_frame_v1.pack_propagate(0)
+        
+        self.save_labeled_video = tk.Button(self.fourth_frame_v1, text= "Save labeled video", command = self.easy_save, background="black", foreground="green")
+        self.save_labeled_video.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
     def easy_open(self):
         global video_file
         video_file = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
@@ -102,6 +109,9 @@ class Application:
             self.current_video.insert(tk.INSERT, self.text)
         else:
             messagebox.showerror("Error box", "Video was not loaded")
+    def easy_save(self):
+        xd = easygui.diropenbox(msg = "elo elo", title = "cat")
+        return 
     def keyboard_settings(self):
         global fps
         self.new_root = tk.Toplevel(self.root)
