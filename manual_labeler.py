@@ -95,7 +95,7 @@ class Application:
         self.fourth_frame_v1.pack(side = tk.TOP)
         self.fourth_frame_v1.pack_propagate(0)
         
-        self.save_labeled_video = tk.Button(self.fourth_frame_v1, text= "Save labeled video", command = self.easy_save, background="black", foreground="green")
+        self.save_labeled_video = tk.Button(self.fourth_frame_v1, text= "Save labeled video", command = easy_save, background="black", foreground="green")
         self.save_labeled_video.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
     def easy_open(self):
         global video_file
@@ -109,9 +109,6 @@ class Application:
             self.current_video.insert(tk.INSERT, self.text)
         else:
             messagebox.showerror("Error box", "Video was not loaded")
-    def easy_save(self):
-        xd = easygui.diropenbox(msg = "elo elo", title = "cat")
-        return 
     def keyboard_settings(self):
         global fps
         self.new_root = tk.Toplevel(self.root)
@@ -565,6 +562,14 @@ def start_vido1():
         xd = df
         cap.release()
         cv2.destroyAllWindows()
-
+def easy_save():
+    #global 
+    save_file = None
+    save_file = easygui.diropenbox(msg = "Select folder for a save location", title = "Typical window")
+    if save_file == None:
+        messagebox.showerror("Error box", "Folder was not selected")
+    else:
+        messagebox.showinfo("Information box", "Folder added :):):)")
+        cap = cv2.VideoCapture(video_file)
 video_object = Application()
 video_object.root.mainloop()
