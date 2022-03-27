@@ -586,8 +586,8 @@ def easy_save():
             if ret == True:
                 current_frames = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
                 print(ret)
-                out.write(frame)
-                print(ret)
+                #out.write(frame)
+                
     
             print("done")
             cap.release()
