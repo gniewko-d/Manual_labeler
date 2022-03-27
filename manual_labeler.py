@@ -563,13 +563,23 @@ def start_vido1():
         cap.release()
         cv2.destroyAllWindows()
 def easy_save():
-    #global 
+    global video_file
+    video_title = video_file.split("\\")
     save_file = None
     save_file = easygui.diropenbox(msg = "Select folder for a save location", title = "Typical window")
+    if video_file == None:
+        messagebox.showerror("Error box", "Upload the video first")
     if save_file == None:
         messagebox.showerror("Error box", "Folder was not selected")
     else:
         messagebox.showinfo("Information box", "Folder added :):):)")
         cap = cv2.VideoCapture(video_file)
+        frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        size = (frame_width, frame_height)
+        save_file = save_file + "\\"
+        print(save_file)
+        #while(cap.isOpened()):
+        #    ret, frame = cap.read()
 video_object = Application()
 video_object.root.mainloop()
