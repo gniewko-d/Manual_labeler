@@ -565,6 +565,7 @@ def start_vido1():
 def easy_save():
     global video_file
     video_title = video_file.split("\\")
+    video_title = video_title[-1].split(".")
     save_file = None
     save_file = easygui.diropenbox(msg = "Select folder for a save location", title = "Typical window")
     if video_file == None:
@@ -574,12 +575,24 @@ def easy_save():
     else:
         messagebox.showinfo("Information box", "Folder added :):):)")
         cap = cv2.VideoCapture(video_file)
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
         frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         size = (frame_width, frame_height)
-        save_file = save_file + "\\"
-        print(save_file)
-        #while(cap.isOpened()):
-        #    ret, frame = cap.read()
+        save_file = save_file + "\\" + video_title[0] + "_labeled.avi"
+        out = cv2.VideoWriter(save_file, fourcc, 20.0, size)
+        while(cap.isOpened()):
+            ret, frame = cap.read()
+            if ret == True:
+                current_frames = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+                print(ret)
+                out.write(frame)
+                print(ret)
+    
+            print("done")
+            cap.release()
+            out.release()
+
+
 video_object = Application()
 video_object.root.mainloop()
