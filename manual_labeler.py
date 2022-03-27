@@ -581,13 +581,16 @@ def easy_save():
         size = (frame_width, frame_height)
         save_file = save_file + "\\" + video_title[0] + "_labeled.avi"
         out = cv2.VideoWriter(save_file, fourcc, 20.0, size)
+        tots = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+        print(tots)
         while(cap.isOpened()):
             ret, frame = cap.read()
             if ret == True:
                 current_frames = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
                 print(ret)
+                print(current_frames)
                 #out.write(frame)
-                
+                cv2.imshow(title_window, frame)
     
             print("done")
             cap.release()
