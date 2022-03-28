@@ -95,7 +95,7 @@ class Application:
         self.fourth_frame_v1.pack(side = tk.TOP)
         self.fourth_frame_v1.pack_propagate(0)
         
-        self.save_labeled_video = tk.Button(self.fourth_frame_v1, text= "Save labeled video", command = easy_save, background="black", foreground="green")
+        self.save_labeled_video = tk.Button(self.fourth_frame_v1, text= "Save labeled video", command = start_vido3, background="black", foreground="green")
         self.save_labeled_video.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
     def easy_open(self):
         global video_file
@@ -271,7 +271,7 @@ class Application:
 def getFrame(frame_nr):
     global cap
     cap.set(cv2.CAP_PROP_POS_FRAMES, frame_nr)
-
+    #key_restart(False ,key_label_controler)
 def key_restart(bool_value, lista_bool, *args):
     for i, j in enumerate(lista_bool):
         if i in args:
@@ -348,7 +348,6 @@ def step_mode(data, label, video, key_pressed, column, previous_column, list_of_
         cv2.setTrackbarPos('frame',title_window, next_frame)
         start_frame_bool = True
         frame_to_list = inital 
-        
         cv2.waitKey(0)
 
 
@@ -409,6 +408,7 @@ def start_vido1():
             ret, frame = cap.read()
             if ret == True:
                 current_frames = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+                
                 if current_frames in label_1_list and key_label_controler[0] == False:
                     draw_label(label_1_name, (10,20), (255,0,0))
                 if current_frames in label_2_list and key_label_controler[0] == False:
@@ -432,13 +432,13 @@ def start_vido1():
                     key_restart(False ,key_label_controler)
                 
                 else:
+                    
                     cv2.imshow(title_window, frame)
                 
                 cv2.imshow(title_window, frame)
                 
                 cv2.setTrackbarPos('frame',title_window, int(current_frames))
                 if cv2.waitKey(25) & 0xFF == ord('q'):
-                    break
                     cap.release()
                     cv2.destroyAllWindows()
                 if keyboard.is_pressed('a'):
@@ -559,9 +559,11 @@ def start_vido1():
                 if keyboard.is_pressed("c"):
                     frame_changer(cap, "front", fps)
                     key_restart(True ,key_label_controler)
-        xd = df
-        cap.release()
-        cv2.destroyAllWindows()
+            else:
+                print("koniec")
+                xd = df
+                cap.release()
+                cv2.destroyAllWindows()
 def easy_save():
     global video_file
     video_title = video_file.split("\\")
@@ -574,28 +576,101 @@ def easy_save():
         messagebox.showerror("Error box", "Folder was not selected")
     else:
         messagebox.showinfo("Information box", "Folder added :):):)")
+        cap2 = cv2.VideoCapture(video_file)
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        frame_width = int(cap2.get(cv2.CAP_PROP_FRAME_WIDTH))
+        frame_height = int(cap2.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        size = (frame_width, frame_height)
+        save_file = save_file + "\\" + video_title[0] + "_labeled.mp4"
+        out = cv2.VideoWriter(save_file, fourcc, 30.0, size)
+        tots = cap2.get(cv2.CAP_PROP_FRAME_COUNT)
+        while cap2.isOpened():
+            ret1, frame1 = cap2.read()
+            if ret1 == True:
+                #out.write(frame)
+                cv2.imshow('frame', frame1)
+            else:
+                print("done")
+                cap2.release()
+                out.release()
+                cv2.destroyAllWindows()
+
+
+def start_vido3():
+    global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a
+    if video_file == None:
+        messagebox.showerror("Error box", "Upload the video first")
+    else:
+        title_window = "Mnimalistic Player"
+        cv2.namedWindow(title_window)
+        cv2.moveWindow(title_window,750,150)
         cap = cv2.VideoCapture(video_file)
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        tots = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+        cv2.createTrackbar('frame', title_window, 0,int(tots)-1, getFrame)
+        video_title = video_file.split("\\")
+        video_title = video_title[-1].split(".")
+        save_file = None
+        save_file = easygui.diropenbox(msg = "Select folder for a save location", title = "Typical window")
+        if save_file == None:
+            messagebox.showerror("Error box", "Folder was not selected")
+        else:
+            messagebox.showinfo("Information box", "Folder added :):):)")
+        if df_checker == False:
+            df = pd.DataFrame(columns = label_list, index = range(1, int(tots) + 1))
+            df.index.name="Frame No."
+            df["Frame No."] = range(1, int(tots) + 1)
+            df_checker = True
+        else:
+            messagebox.showinfo("Information box", "Labels uploaded")
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         size = (frame_width, frame_height)
-        save_file = save_file + "\\" + video_title[0] + "_labeled.avi"
-        out = cv2.VideoWriter(save_file, fourcc, 20.0, size)
-        tots = cap.get(cv2.CAP_PROP_FRAME_COUNT)
-        print(tots)
+        save_file = save_file + "\\" + video_title[0] + "_labeled.mp4"
+        out = cv2.VideoWriter(save_file, fourcc, 30.0, size)
         while(cap.isOpened()):
             ret, frame = cap.read()
             if ret == True:
                 current_frames = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
-                print(ret)
-                print(current_frames)
-                #out.write(frame)
+                if current_frames in label_1_list and key_label_controler[0] == False:
+                    draw_label(label_1_name, (10,20), (255,0,0))
+                if current_frames in label_1_list and key_label_controler[0] == False:
+                    draw_label(label_1_name, (10,20), (255,0,0))
+                if current_frames in label_2_list and key_label_controler[0] == False:
+                    draw_label(label_2_name, (10,40), (0,0,255))
+                if current_frames in label_3_list and key_label_controler[0] == False:
+                    draw_label(label_3_name, (10,60), (0,102,0))
+                if current_frames in label_4_list and key_label_controler[0] == False:
+                    draw_label(label_4_name, (10,80), (204,0,102))
+                if current_frames in label_5_list and key_label_controler[0] == False:
+                    draw_label(label_5_name, (10,100), (153,153,255))
+                if current_frames in label_6_list and key_label_controler[0] == False:
+                    draw_label(label_6_name, (10,120), (255,255,153))
+                if current_frames in label_7_list and key_label_controler[0] == False:
+                    draw_label(label_7_name, (10,140), (0,128,255))
+                if current_frames in label_8_list and key_label_controler[0] == False:
+                    draw_label(label_8_name, (10,160), (153,153,0))
+                if current_frames in label_9_list and key_label_controler[0] == False:
+                    draw_label(label_9_name, (10,180), (128,128,128))
+                elif current_frames in label_1_list and key_label_controler[0] == True:
+                    cv2.imshow(title_window, frame)
+                    key_restart(False ,key_label_controler)
+                    
+                else:
+                    cv2.imshow(title_window, frame)
+                out.write(frame)
                 cv2.imshow(title_window, frame)
-    
-            print("done")
-            cap.release()
-            out.release()
-
-
+                cv2.setTrackbarPos('frame',title_window, int(current_frames))
+                
+                if cv2.waitKey(25) & 0xFF == ord('q'):
+                    cap.release()
+                    cv2.destroyAllWindows()
+            else:
+                print("koniec")
+                xd = df
+                cap.release()
+                out.release()
+                cv2.destroyAllWindows()
 video_object = Application()
 video_object.root.mainloop()
+
