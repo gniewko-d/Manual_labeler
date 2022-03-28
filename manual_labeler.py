@@ -427,7 +427,7 @@ def start_vido1():
                     draw_label(label_8_name, (10,160), (153,153,0))
                 if current_frames in label_9_list and key_label_controler[0] == False:
                     draw_label(label_9_name, (10,180), (128,128,128))
-                elif current_frames in label_1_list and key_label_controler[0] == True:
+                elif (current_frames in label_1_list or current_frames in label_2_list or current_frames in label_3_list or current_frames in label_4_list or current_frames in label_5_list or current_frames in label_6_list or current_frames in label_7_list or current_frames in label_8_list) and key_label_controler[0] == True:
                     cv2.imshow(title_window, frame)
                     key_restart(False ,key_label_controler)
                 
@@ -652,10 +652,6 @@ def start_vido3():
                     draw_label(label_8_name, (10,160), (153,153,0))
                 if current_frames in label_9_list and key_label_controler[0] == False:
                     draw_label(label_9_name, (10,180), (128,128,128))
-                elif current_frames in label_1_list and key_label_controler[0] == True:
-                    cv2.imshow(title_window, frame)
-                    key_restart(False ,key_label_controler)
-                    
                 else:
                     cv2.imshow(title_window, frame)
                 out.write(frame)
