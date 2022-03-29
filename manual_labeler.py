@@ -95,8 +95,14 @@ class Application:
         self.fourth_frame_v1.pack(side = tk.TOP)
         self.fourth_frame_v1.pack_propagate(0)
         
-        self.save_labeled_video = tk.Button(self.fourth_frame_v1, text= "Save labeled video", command = start_vido3, background="black", foreground="green")
+        self.save_labeled_video = tk.Button(self.fourth_frame_v1, text= "Save labeled video and data frame", command = start_vido3, background="black", foreground="green")
         self.save_labeled_video.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
+    
+        self.fifth_frame_v1 = tk.Frame(self.root, background="#116562", width=400, height = 30)
+        self.fifth_frame_v1.pack(side = tk.TOP)
+        self.fifth_frame_v1.pack_propagate(0)
+    
+        self.save_machine_state = tk.Button(self.)
     def easy_open(self):
         global video_file
         video_file = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
@@ -324,7 +330,7 @@ def step_mode(data, label, video, key_pressed, column, previous_column, list_of_
         video.set(cv2.CAP_PROP_POS_FRAMES, next_frame+1)
         cv2.setTrackbarPos('frame',title_window, next_frame+1)
         x += 1 
-        frame_to_list = inital-1
+        frame_to_list = inital
         cv2.waitKey(0)
     elif key_pressed:
         start_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
@@ -370,19 +376,26 @@ def end_key(data, column):
         messagebox.showerror("Error box", "First, set the beginning of range")
 
 def delete_mode(data, label, column):
-    
-    current_frames = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
-    df.iloc[current_frames-1, column] = label
-    cv2.waitKey(-1)
-
-def ctrl_alt_delet(data):
-    global stop_frame, start_frame_freezed
-    if stop_frame >= start_frame_freezed:
-            data.iloc[start_frame_freezed-2:stop_frame, column] = np.nan
-            cv2.waitKey(-1)
-    elif stop_frame < start_frame_freezed:
-        data.iloc[stop_frame:start_frame_freezed, column] = np.nan
+    global current_label_list, current_label
+    try:
+        current_frames = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
+        df.iloc[current_frames-1, column] = label
+        current_label_list.remove(current_frames)
         cv2.waitKey(-1)
+    except ValueError:
+        messagebox.showerror("Error box", f"Frame unlabeled or wrong label to delet (current label :{current_label})")
+def ctrl_alt_delet(data):
+    global stop_frame, start_frame_freezed, current_label_list
+    try:
+        if stop_frame >= start_frame_freezed:
+            data.iloc[start_frame_freezed-2:stop_frame, column] = np.nan
+            z = [current_label_list.remove(i) for i in range(start_frame_freezed-1, stop_frame) if i in current_label_list]
+            cv2.waitKey(-1)
+        elif stop_frame < start_frame_freezed:
+            data.iloc[stop_frame:start_frame_freezed, column] = np.nan
+            cv2.waitKey(-1)
+    except TypeError:
+        messagebox.showerror("Error box", "First, set the beginning (key 1-9) and the end (key e) of the range")
 
 
 
@@ -427,7 +440,7 @@ def start_vido1():
                     draw_label(label_8_name, (10,160), (153,153,0))
                 if current_frames in label_9_list and key_label_controler[0] == False:
                     draw_label(label_9_name, (10,180), (128,128,128))
-                elif (current_frames in label_1_list or current_frames in label_2_list or current_frames in label_3_list or current_frames in label_4_list or current_frames in label_5_list or current_frames in label_6_list or current_frames in label_7_list or current_frames in label_8_list) and key_label_controler[0] == True:
+                elif (current_frames in label_1_list or current_frames in label_2_list or current_frames in label_3_list or current_frames in label_4_list or current_frames in label_5_list or current_frames in label_6_list or current_frames in label_7_list or current_frames in label_8_list or current_frames in label_9_list) and key_label_controler[0] == True:
                     cv2.imshow(title_window, frame)
                     key_restart(False ,key_label_controler)
                 
@@ -564,49 +577,13 @@ def start_vido1():
                 xd = df
                 cap.release()
                 cv2.destroyAllWindows()
-def easy_save():
-    global video_file
-    video_title = video_file.split("\\")
-    video_title = video_title[-1].split(".")
-    save_file = None
-    save_file = easygui.diropenbox(msg = "Select folder for a save location", title = "Typical window")
-    if video_file == None:
-        messagebox.showerror("Error box", "Upload the video first")
-    if save_file == None:
-        messagebox.showerror("Error box", "Folder was not selected")
-    else:
-        messagebox.showinfo("Information box", "Folder added :):):)")
-        cap2 = cv2.VideoCapture(video_file)
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        frame_width = int(cap2.get(cv2.CAP_PROP_FRAME_WIDTH))
-        frame_height = int(cap2.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        size = (frame_width, frame_height)
-        save_file = save_file + "\\" + video_title[0] + "_labeled.mp4"
-        out = cv2.VideoWriter(save_file, fourcc, 30.0, size)
-        tots = cap2.get(cv2.CAP_PROP_FRAME_COUNT)
-        while cap2.isOpened():
-            ret1, frame1 = cap2.read()
-            if ret1 == True:
-                #out.write(frame)
-                cv2.imshow('frame', frame1)
-            else:
-                print("done")
-                cap2.release()
-                out.release()
-                cv2.destroyAllWindows()
-
-
 def start_vido3():
     global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a
     if video_file == None:
         messagebox.showerror("Error box", "Upload the video first")
     else:
-        title_window = "Mnimalistic Player"
-        cv2.namedWindow(title_window)
-        cv2.moveWindow(title_window,750,150)
         cap = cv2.VideoCapture(video_file)
         tots = cap.get(cv2.CAP_PROP_FRAME_COUNT)
-        cv2.createTrackbar('frame', title_window, 0,int(tots)-1, getFrame)
         video_title = video_file.split("\\")
         video_title = video_title[-1].split(".")
         save_file = None
@@ -622,6 +599,8 @@ def start_vido3():
             df_checker = True
         else:
             messagebox.showinfo("Information box", "Labels uploaded")
+        save_file_excel = save_file + "\\" + video_title[0] + ".xlsx"
+        df.to_excel(save_file_excel)
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -632,8 +611,6 @@ def start_vido3():
             ret, frame = cap.read()
             if ret == True:
                 current_frames = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
-                if current_frames in label_1_list and key_label_controler[0] == False:
-                    draw_label(label_1_name, (10,20), (255,0,0))
                 if current_frames in label_1_list and key_label_controler[0] == False:
                     draw_label(label_1_name, (10,20), (255,0,0))
                 if current_frames in label_2_list and key_label_controler[0] == False:
@@ -652,17 +629,10 @@ def start_vido3():
                     draw_label(label_8_name, (10,160), (153,153,0))
                 if current_frames in label_9_list and key_label_controler[0] == False:
                     draw_label(label_9_name, (10,180), (128,128,128))
-                else:
-                    cv2.imshow(title_window, frame)
+
                 out.write(frame)
-                cv2.imshow(title_window, frame)
-                cv2.setTrackbarPos('frame',title_window, int(current_frames))
-                
-                if cv2.waitKey(25) & 0xFF == ord('q'):
-                    cap.release()
-                    cv2.destroyAllWindows()
             else:
-                print("koniec")
+                messagebox.showinfo("Information box", "Video and data were saved successfully :):):)")
                 xd = df
                 cap.release()
                 out.release()
