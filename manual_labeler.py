@@ -102,7 +102,12 @@ class Application:
         self.fifth_frame_v1.pack(side = tk.TOP)
         self.fifth_frame_v1.pack_propagate(0)
     
-        self.save_machine_state = tk.Button(self.)
+        self.save_machine_state = tk.Button(self.fifth_frame_v1, text = "Save current state", command = "", background="black", foreground="green", width = 17)
+        self.save_machine_state.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
+        
+        self.load_machine_state = tk.Button(self.fifth_frame_v1, text = "Load state from file", command = "", background="black", foreground="green")
+        self.load_machine_state.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
+        
     def easy_open(self):
         global video_file
         video_file = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
