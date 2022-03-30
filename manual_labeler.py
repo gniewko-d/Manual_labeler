@@ -16,6 +16,7 @@ from PIL import Image, ImageTk
 import easygui
 import tkinter.scrolledtext as scrolledtext
 from pandastable import Table
+import csv
 df_checker = False
 df = None
 frame_to_list = None
@@ -102,7 +103,7 @@ class Application:
         self.fifth_frame_v1.pack(side = tk.TOP)
         self.fifth_frame_v1.pack_propagate(0)
     
-        self.save_machine_state = tk.Button(self.fifth_frame_v1, text = "Save current state", command = "", background="black", foreground="green", width = 17)
+        self.save_machine_state = tk.Button(self.fifth_frame_v1, text = "Save current state", command = run_save_machine_state, background="black", foreground="green", width = 17)
         self.save_machine_state.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
         
         self.load_machine_state = tk.Button(self.fifth_frame_v1, text = "Load state from file", command = "", background="black", foreground="green")
@@ -282,7 +283,7 @@ class Application:
 def getFrame(frame_nr):
     global cap
     cap.set(cv2.CAP_PROP_POS_FRAMES, frame_nr)
-    #key_restart(False ,key_label_controler)
+
 def key_restart(bool_value, lista_bool, *args):
     for i, j in enumerate(lista_bool):
         if i in args:
@@ -402,8 +403,32 @@ def ctrl_alt_delet(data):
     except TypeError:
         messagebox.showerror("Error box", "First, set the beginning (key 1-9) and the end (key e) of the range")
 
+def save_machine_state_fun(mother_list, *args):
+    
+    mother_list = []
+    zz = [mother_list.append(i) for i in args]
+    xx = [i.append("exist") for i in mother_list if len(i) == 0]
+    return mother_list
 
-
+def run_save_machine_state():
+    global df, video_file
+    mother_df = df
+    mother_list = []
+    save_file1 = None
+    save_file1 = easygui.diropenbox(msg = "Select folder for a save location", title = "Typical window")
+    if save_file1 == None:
+        messagebox.showerror("Error box", "Folder was not selected")
+    else:
+        messagebox.showinfo("Information box", "Folder added :):):)")
+    video_title = video_file.split("\\")
+    video_title = video_title[-1].split(".")
+    save_mother_df = save_file1 + "\\" + video_title[0] + "_mother_A.xlsx"
+    mother_df.to_excel(save_mother_df)
+    
+    mother_list = save_machine_state_fun(mother_list, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list)
+    with open(save_file1 + "\\" + video_title[0] + "_mother_B.csv", "w", newline = "") as f:
+        mother_list_writer = csv.writer(f)
+        mother_list_writer.writerows(mother_list)
 def start_vido1():
     global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a
     if video_file == None:
@@ -583,7 +608,7 @@ def start_vido1():
                 cap.release()
                 cv2.destroyAllWindows()
 def start_vido3():
-    global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a
+    global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a, video_title
     if video_file == None:
         messagebox.showerror("Error box", "Upload the video first")
     else:
@@ -634,7 +659,6 @@ def start_vido3():
                     draw_label(label_8_name, (10,160), (153,153,0))
                 if current_frames in label_9_list and key_label_controler[0] == False:
                     draw_label(label_9_name, (10,180), (128,128,128))
-
                 out.write(frame)
             else:
                 messagebox.showinfo("Information box", "Video and data were saved successfully :):):)")
@@ -644,4 +668,3 @@ def start_vido3():
                 cv2.destroyAllWindows()
 video_object = Application()
 video_object.root.mainloop()
-
