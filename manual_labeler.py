@@ -106,7 +106,7 @@ class Application:
         self.save_machine_state = tk.Button(self.fifth_frame_v1, text = "Save current state", command = run_save_machine_state, background="black", foreground="green", width = 17)
         self.save_machine_state.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
         
-        self.load_machine_state = tk.Button(self.fifth_frame_v1, text = "Load state from file", command = "", background="black", foreground="green")
+        self.load_machine_state = tk.Button(self.fifth_frame_v1, text = "Load state from file", command = load_machine_state_fun, background="black", foreground="green")
         self.load_machine_state.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
         
     def easy_open(self):
@@ -129,7 +129,7 @@ class Application:
         self.first_frame_v1 = tk.Frame(self.new_root, background="black")
         self.first_frame_v1.pack(expand=True, fill='both')
         self.instruction = tk.Text(self.first_frame_v1, height = 23, width = 70)
-        self.text_v1 = "Press on your keyboard:\n a = move one frame backward\n d = move one frame forward\n q = escape from video and save markers\n p = pause the video\n r = restart the video (keep the markers applied)\n w = slow down video (have to be pressed constantly)\n e = frame to which (without it) all the preceding ones will\n\t be appropriately marked (depends on labels name set by user).\n\t Start point is set by key 1-9\n key 1-9 = label current frame and jumpt to next one or\n\t set the beginning of the range.\n\t Next you can move to whatever frame (backward or forward)\n\t and there set the end of the range by key e.\n\t All frames within that range will be labeled\n g = delete label of current frame\n h = removes the last labelled range\n z = move x (default = 5) frames backward\n c = move x (default = 5) frames forward\n"
+        self.text_v1 = "Press on your keyboard:\n a = move one frame backward\n d = move one frame forward\n q = escape from video and save markers\n p = pause the video\n r = restart the video (keep the markers applied)\n w = slow down video (have to be pressed constantly)\n e = frame to which (without it) all the preceding ones will\n\t be appropriately marked (depends on labels name set by user).\n\t Start point is set by key 1-9\n key 1-9 = label current frame and jumpt to next one or\n\t set the beginning of the range.\n\t Next you can move to whatever frame (backward or forward)\n\t and there set the end of the range by key e.\n\t All frames within that range will be labeled\n g = delete last used label from current frame\n h = removes the last labelled range\n z = move x (default = 5) frames backward\n c = move x (default = 5) frames forward\n"
         conteiner = ["~"*70, "~"*70, self.text_v1, "="*70, "="*70]
         
         for i in range(len(conteiner)):
@@ -417,9 +417,10 @@ def run_save_machine_state():
     save_file1 = None
     save_file1 = easygui.diropenbox(msg = "Select folder for a save location", title = "Typical window")
     if save_file1 == None:
-        messagebox.showerror("Error box", "Folder was not selected")
+        messagebox.showerror("Error box", "Folder was not selected, data unsaved")
     else:
         messagebox.showinfo("Information box", "Folder added :):):)")
+        messagebox.showinfo("Information box", "Do not change the content of created files")
     video_title = video_file.split("\\")
     video_title = video_title[-1].split(".")
     save_mother_df = save_file1 + "\\" + video_title[0] + "_mother_A.xlsx"
@@ -429,6 +430,21 @@ def run_save_machine_state():
     with open(save_file1 + "\\" + video_title[0] + "_mother_B.csv", "w", newline = "") as f:
         mother_list_writer = csv.writer(f)
         mother_list_writer.writerows(mother_list)
+
+def load_machine_state_fun():
+    global df 
+    video_title = video_file.split("\\")
+    video_title = video_title[-1].split(".")
+    messagebox.showinfo("Information box", f"Load file named : {video_title[0]}_mother_A")
+    df_loaded = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
+    df_loaded = pd.read_excel(df_loaded)
+    df_loaded = df_loaded.set_index("Frame No.")
+    df = df_loaded
+    list_of_columns = list(df.columns)
+    list_of_columns = ["None" if "None" in i else i for i in list_of_columns]
+    list_of_columns = ["Frame No." if "Frame No" in i else i for i in list_of_columns]
+    df.columns = list_of_columns
+    
 def start_vido1():
     global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a
     if video_file == None:
@@ -668,3 +684,4 @@ def start_vido3():
                 cv2.destroyAllWindows()
 video_object = Application()
 video_object.root.mainloop()
+
