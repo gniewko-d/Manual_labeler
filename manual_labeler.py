@@ -430,9 +430,9 @@ def run_save_machine_state():
     with open(save_file1 + "\\" + video_title[0] + "_mother_B.csv", "w", newline = "") as f:
         mother_list_writer = csv.writer(f)
         mother_list_writer.writerows(mother_list)
-
+ 
 def load_machine_state_fun():
-    global df 
+    global df, label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name
     video_title = video_file.split("\\")
     video_title = video_title[-1].split(".")
     messagebox.showinfo("Information box", f"Load file named : {video_title[0]}_mother_A")
@@ -444,6 +444,25 @@ def load_machine_state_fun():
     list_of_columns = ["None" if "None" in i else i for i in list_of_columns]
     list_of_columns = ["Frame No." if "Frame No" in i else i for i in list_of_columns]
     df.columns = list_of_columns
+    list_of_columns = list(df.columns)
+    if list_of_columns[0] != "None":
+        label_1_name = list_of_columns[0]
+    if list_of_columns[1] != "None":
+        label_2_name = list_of_columns[1]
+    if list_of_columns[2] != "None":
+        label_3_name = list_of_columns[2]
+    if list_of_columns[3] != "None":
+        label_4_name = list_of_columns[3]
+    if list_of_columns[4] != "None":
+        label_5_name = list_of_columns[4]
+    if list_of_columns[5] != "None":
+        label_6_name = list_of_columns[5]
+    if list_of_columns[6] != "None":
+        label_7_name = list_of_columns[6]
+    if list_of_columns[7] != "None":
+        label_8_name = list_of_columns[7]
+    if list_of_columns[8] != "None":
+        label_9_name = list_of_columns[8]
     
 def start_vido1():
     global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a
