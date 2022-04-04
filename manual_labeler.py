@@ -248,7 +248,7 @@ class Application:
         
         self.submit = tk.Button(self.submit_frame, text = "Submit", command = self.label_changer, foreground="green", background= "black")
         self.submit.pack(side = tk.BOTTOM)
-    
+
     def label_changer(self):
         global label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name, label_list
         
@@ -435,7 +435,7 @@ def load_machine_state_fun():
     global df, label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name
     video_title = video_file.split("\\")
     video_title = video_title[-1].split(".")
-    messagebox.showinfo("Information box", f"Load file named : {video_title[0]}_mother_A")
+    messagebox.showinfo("Information box", f"Load file named: {video_title[0]}_mother_A")
     df_loaded = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
     df_loaded = pd.read_excel(df_loaded)
     df_loaded = df_loaded.set_index("Frame No.")
@@ -463,6 +463,8 @@ def load_machine_state_fun():
         label_8_name = list_of_columns[7]
     if list_of_columns[8] != "None":
         label_9_name = list_of_columns[8]
+    messagebox.showinfo("Information box", f"Next, load file named: {video_title[0]}_mother_B")
+    
     
 def start_vido1():
     global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a
