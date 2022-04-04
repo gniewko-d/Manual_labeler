@@ -436,7 +436,7 @@ def load_machine_state_fun():
     video_title = video_file.split("\\")
     video_title = video_title[-1].split(".")
     messagebox.showinfo("Information box", f"Load file named: {video_title[0]}_mother_A")
-    df_loaded = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
+    df_loaded = easygui.fileopenbox(title="Select a file", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
     df_loaded = pd.read_excel(df_loaded)
     df_loaded = df_loaded.set_index("Frame No.")
     df = df_loaded
@@ -463,8 +463,9 @@ def load_machine_state_fun():
         label_8_name = list_of_columns[7]
     if list_of_columns[8] != "None":
         label_9_name = list_of_columns[8]
-    messagebox.showinfo("Information box", f"Next, load file named: {video_title[0]}_mother_B")
     
+    messagebox.showinfo("Information box", f"Next, load file named: {video_title[0]}_mother_B")
+    csv_label_list = easygui.fileopenbox(title="Select a file", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
     
 def start_vido1():
     global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a
