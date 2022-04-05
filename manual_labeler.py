@@ -17,6 +17,7 @@ import easygui
 import tkinter.scrolledtext as scrolledtext
 from pandastable import Table
 import csv
+
 df_checker = False
 df = None
 frame_to_list = None
@@ -432,7 +433,7 @@ def run_save_machine_state():
         mother_list_writer.writerows(mother_list)
  
 def load_machine_state_fun():
-    global df, label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name
+    global df, label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, df_checker
     video_title = video_file.split("\\")
     video_title = video_title[-1].split(".")
     messagebox.showinfo("Information box", f"Load file named: {video_title[0]}_mother_A")
@@ -445,6 +446,7 @@ def load_machine_state_fun():
     list_of_columns = ["Frame No." if "Frame No" in i else i for i in list_of_columns]
     df.columns = list_of_columns
     list_of_columns = list(df.columns)
+    df_checker = True
     if list_of_columns[0] != "None":
         label_1_name = list_of_columns[0]
     if list_of_columns[1] != "None":
@@ -467,6 +469,36 @@ def load_machine_state_fun():
     messagebox.showinfo("Information box", f"Next, load file named: {video_title[0]}_mother_B")
     csv_label_list = easygui.fileopenbox(title="Select a file", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
     
+    with open (csv_label_list) as csv_file_mother_b:
+        csv_reader = csv.reader(csv_file_mother_b, delimiter=',')
+        for i,j in enumerate(csv_reader):
+            if i == 0 and j[0] != "exist":
+                j = [int(d) for d in j]
+                label_1_list = j
+            elif i == 1 and j[0] != "exist":
+                j = [int(d) for d in j]
+                label_2_list = j
+            elif i == 2 and j[0] != "exist":
+                j = [int(d) for d in j]
+                label_3_list = j
+            elif i == 3 and j[0] != "exist":
+                j = [int(d) for d in j]
+                label_4_list = j
+            elif i == 4 and j[0] != "exist":
+                j = [int(d) for d in j]
+                label_5_list = j
+            elif i == 5 and j[0] != "exist":
+                j = [int(d) for d in j]
+                label_6_list = j
+            elif i == 6 and j[0] != "exist":
+                j = [int(d) for d in j]
+                label_7_list = j
+            elif i == 7 and j[0] != "exist":
+                j = [int(d) for d in j]
+                label_8_list = j
+            elif i == 8 and j[0] != "exist":
+                j = [int(d) for d in j]
+                label_9_list = j
 def start_vido1():
     global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a
     if video_file == None:
