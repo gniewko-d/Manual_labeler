@@ -517,6 +517,7 @@ def start_vido1():
             df_checker = True
         else:
             messagebox.showinfo("Information box", "Labels uploaded")
+            df.columns = label_list
         while(cap.isOpened()):
             ret, frame = cap.read()
             if ret == True:
