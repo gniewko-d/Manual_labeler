@@ -17,6 +17,8 @@ import easygui
 import tkinter.scrolledtext as scrolledtext
 from pandastable import Table
 import csv
+import pyttsx3
+import random
 
 df_checker = False
 df = None
@@ -32,6 +34,7 @@ stop_frame = None
 current_label = "test"
 fps = 5
 current_label_list = "test1"
+label_list = None
 #img = cv2.imread("C:\\Users\\malgo\\Desktop\\python\\video_labeling\\image_v1.png")
 label_1_name = f"{None}"
 label_2_name = f"{None}"
@@ -109,7 +112,12 @@ class Application:
         
         self.load_machine_state = tk.Button(self.fifth_frame_v1, text = "Load state from file", command = load_machine_state_fun, background="black", foreground="green")
         self.load_machine_state.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
-        
+        self.engine = pyttsx3.init()
+        self.list_of_voices = ['Hello World', "welcome to the Labeling world", "hello friend", "I wish you fruitful work", "hello user", "I will try my best to help you work", "What a nice day to label something"]
+        voices = self.engine.getProperty('voices')
+        self.engine.setProperty('voice', voices[1].id)
+        self.engine.say(random.choice(self.list_of_voices))
+        self.engine.runAndWait()
     def easy_open(self):
         global video_file
         video_file = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
@@ -267,9 +275,12 @@ class Application:
 
     def draw_table(self):
         global df, df_checker
+        
         if df_checker == False:
-            messagebox.showerror("Error box", "TO see your data frame")
-            
+            messagebox.showerror("Error box", "To see your data frame first press start labeling")
+        names_columns = df.columns.tolist()
+        names_columns[0:9]= label_list
+        df.columns = names_columns
         self.new_root_3 = tk.Toplevel(self.root)
         self.new_root_3.title("Labeled frames")
         self.tabel_frame = tk.Frame(self.new_root_3)
@@ -349,8 +360,7 @@ def step_mode(data, label, video, key_pressed, column, previous_column, list_of_
         frame_to_list = inital-1
         cv2.waitKey(0)
         x += 1 
-        
-        
+
     else:
         x = 0
         start_frame = int(cap.get(cv2.CAP_PROP_POS_FRAMES))
@@ -503,6 +513,8 @@ def start_vido1():
     global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a
     if video_file == None:
         messagebox.showerror("Error box", "Upload the video first")
+    elif label_list == None:
+        messagebox.showerror("Error box", "Before you start labeling you have to submit any label  first")
     else:
         title_window = "Mnimalistic Player"
         cv2.namedWindow(title_window)
@@ -517,7 +529,9 @@ def start_vido1():
             df_checker = True
         else:
             messagebox.showinfo("Information box", "Labels uploaded")
-            df.columns = label_list
+            names_columns = df.columns.tolist()
+            names_columns[0:9]= label_list
+            df.columns = names_columns
         while(cap.isOpened()):
             ret, frame = cap.read()
             if ret == True:
