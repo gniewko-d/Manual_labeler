@@ -5,20 +5,17 @@ Created on Fri Mar 11 15:01:40 2022
 @author: gniew
 """
 import keyboard
-import datetime
 import cv2
 import pandas as pd
-import os
 import numpy as np
 import tkinter as tk
 from tkinter import messagebox
-from PIL import Image, ImageTk
 import easygui
-import tkinter.scrolledtext as scrolledtext
 from pandastable import Table
 import csv
 import pyttsx3
 import random
+import os
 
 df_checker = False
 df = None
