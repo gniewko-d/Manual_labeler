@@ -15,7 +15,7 @@ from pandastable import Table
 import csv
 import pyttsx3
 import random
-import os
+
 
 df_checker = False
 df = None
