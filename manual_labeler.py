@@ -32,6 +32,7 @@ current_label = "test"
 fps = 5
 current_label_list = "test1"
 label_list = None
+available_formats = ["flv", "avi", "amv", "mp4"]
 #img = cv2.imread("C:\\Users\\malgo\\Desktop\\python\\video_labeling\\image_v1.png")
 label_1_name = f"{None}"
 label_2_name = f"{None}"
@@ -116,15 +117,21 @@ class Application:
         self.engine.say(random.choice(self.list_of_voices))
         self.engine.runAndWait()
     def easy_open(self):
-        global video_file
+        global video_file, available_formats
         video_file = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
         if video_file != None:
             messagebox.showinfo("Information box", "Video uploaded")
             video_title = video_file.split("\\")
-            self.current_video.delete("1.0","end")
-            self.text = f"Current video: {video_title[-1]}"
-            self.current_video.configure(width = len(self.text))
-            self.current_video.insert(tk.INSERT, self.text)
+            video_format = video_title[-1].split(".")
+            video_format = video_format[-1].lower()
+            if video_format in available_formats:
+                self.current_video.delete("1.0","end")
+                self.text = f"Current video: {video_title[-1]}"
+                self.current_video.configure(width = len(self.text))
+                self.current_video.insert(tk.INSERT, self.text)
+            else:
+                messagebox.showerror("Error box", "Wrong format of video!")
+                messagebox.showinfo("Information box", f'Currently available formats: .flv, .avi, .amv, .mp4, \nformat of your video : {video_format}')
         else:
             messagebox.showerror("Error box", "Video was not loaded")
     def keyboard_settings(self):
@@ -419,93 +426,98 @@ def save_machine_state_fun(mother_list, *args):
     return mother_list
 
 def run_save_machine_state():
-    global df, video_file
-    mother_df = df
-    mother_list = []
-    save_file1 = None
-    save_file1 = easygui.diropenbox(msg = "Select folder for a save location", title = "Typical window")
-    if save_file1 == None:
-        messagebox.showerror("Error box", "Folder was not selected, data unsaved")
+    global df, video_file, label_list
+    if video_file == None or label_list == None or df_checker == False:
+        messagebox.showerror("Error box", "Before save current state:\n 1. Upload the video \n 2. Submit any label \n 3. Label something")
     else:
-        messagebox.showinfo("Information box", "Folder added :):):)")
-        messagebox.showinfo("Information box", "Do not change the content of created files")
-    video_title = video_file.split("\\")
-    video_title = video_title[-1].split(".")
-    save_mother_df = save_file1 + "\\" + video_title[0] + "_mother_A.xlsx"
-    mother_df.to_excel(save_mother_df)
-    
-    mother_list = save_machine_state_fun(mother_list, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list)
-    with open(save_file1 + "\\" + video_title[0] + "_mother_B.csv", "w", newline = "") as f:
-        mother_list_writer = csv.writer(f)
-        mother_list_writer.writerows(mother_list)
+        mother_df = df
+        mother_list = []
+        save_file1 = None
+        save_file1 = easygui.diropenbox(msg = "Select folder for a save location", title = "Typical window")
+        if save_file1 == None:
+            messagebox.showerror("Error box", "Folder was not selected, data unsaved")
+        else:
+            messagebox.showinfo("Information box", "Folder added :):):)")
+            messagebox.showinfo("Information box", "Do not change the content of created files")
+            video_title = video_file.split("\\")
+            video_title = video_title[-1].split(".")
+            save_mother_df = save_file1 + "\\" + video_title[0] + "_mother_A.xlsx"
+            mother_df.to_excel(save_mother_df)
+            mother_list = save_machine_state_fun(mother_list, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list)
+            with open(save_file1 + "\\" + video_title[0] + "_mother_B.csv", "w", newline = "") as f:
+                mother_list_writer = csv.writer(f)
+                mother_list_writer.writerows(mother_list)
  
 def load_machine_state_fun():
     global df, label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, df_checker
-    video_title = video_file.split("\\")
-    video_title = video_title[-1].split(".")
-    messagebox.showinfo("Information box", f"Load file named: {video_title[0]}_mother_A")
-    df_loaded = easygui.fileopenbox(title="Select a file", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
-    df_loaded = pd.read_excel(df_loaded)
-    df_loaded = df_loaded.set_index("Frame No.")
-    df = df_loaded
-    list_of_columns = list(df.columns)
-    list_of_columns = ["None" if "None" in i else i for i in list_of_columns]
-    list_of_columns = ["Frame No." if "Frame No" in i else i for i in list_of_columns]
-    df.columns = list_of_columns
-    list_of_columns = list(df.columns)
-    df_checker = True
-    if list_of_columns[0] != "None":
-        label_1_name = list_of_columns[0]
-    if list_of_columns[1] != "None":
-        label_2_name = list_of_columns[1]
-    if list_of_columns[2] != "None":
-        label_3_name = list_of_columns[2]
-    if list_of_columns[3] != "None":
-        label_4_name = list_of_columns[3]
-    if list_of_columns[4] != "None":
-        label_5_name = list_of_columns[4]
-    if list_of_columns[5] != "None":
-        label_6_name = list_of_columns[5]
-    if list_of_columns[6] != "None":
-        label_7_name = list_of_columns[6]
-    if list_of_columns[7] != "None":
-        label_8_name = list_of_columns[7]
-    if list_of_columns[8] != "None":
-        label_9_name = list_of_columns[8]
+    if video_file == None:
+        messagebox.showerror("Error box", "Before you load state from file: Upload the video first")
+    else:
+        video_title = video_file.split("\\")
+        video_title = video_title[-1].split(".")
+        messagebox.showinfo("Information box", f"Load file named: {video_title[0]}_mother_A")
+        df_loaded = easygui.fileopenbox(title="Select a file", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
+        df_loaded = pd.read_excel(df_loaded)
+        df_loaded = df_loaded.set_index("Frame No.")
+        df = df_loaded
+        list_of_columns = list(df.columns)
+        list_of_columns = ["None" if "None" in i else i for i in list_of_columns]
+        list_of_columns = ["Frame No." if "Frame No" in i else i for i in list_of_columns]
+        df.columns = list_of_columns
+        list_of_columns = list(df.columns)
+        df_checker = True
+        if list_of_columns[0] != "None":
+            label_1_name = list_of_columns[0]
+        if list_of_columns[1] != "None":
+            label_2_name = list_of_columns[1]
+        if list_of_columns[2] != "None":
+            label_3_name = list_of_columns[2]
+        if list_of_columns[3] != "None":
+            label_4_name = list_of_columns[3]
+        if list_of_columns[4] != "None":
+            label_5_name = list_of_columns[4]
+        if list_of_columns[5] != "None":
+            label_6_name = list_of_columns[5]
+        if list_of_columns[6] != "None":
+            label_7_name = list_of_columns[6]
+        if list_of_columns[7] != "None":
+            label_8_name = list_of_columns[7]
+        if list_of_columns[8] != "None":
+            label_9_name = list_of_columns[8]
     
-    messagebox.showinfo("Information box", f"Next, load file named: {video_title[0]}_mother_B")
-    csv_label_list = easygui.fileopenbox(title="Select a file", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
+        messagebox.showinfo("Information box", f"Next, load file named: {video_title[0]}_mother_B")
+        csv_label_list = easygui.fileopenbox(title="Select a file", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
     
-    with open (csv_label_list) as csv_file_mother_b:
-        csv_reader = csv.reader(csv_file_mother_b, delimiter=',')
-        for i,j in enumerate(csv_reader):
-            if i == 0 and j[0] != "exist":
-                j = [int(d) for d in j]
-                label_1_list = j
-            elif i == 1 and j[0] != "exist":
-                j = [int(d) for d in j]
-                label_2_list = j
-            elif i == 2 and j[0] != "exist":
-                j = [int(d) for d in j]
-                label_3_list = j
-            elif i == 3 and j[0] != "exist":
-                j = [int(d) for d in j]
-                label_4_list = j
-            elif i == 4 and j[0] != "exist":
-                j = [int(d) for d in j]
-                label_5_list = j
-            elif i == 5 and j[0] != "exist":
-                j = [int(d) for d in j]
-                label_6_list = j
-            elif i == 6 and j[0] != "exist":
-                j = [int(d) for d in j]
-                label_7_list = j
-            elif i == 7 and j[0] != "exist":
-                j = [int(d) for d in j]
-                label_8_list = j
-            elif i == 8 and j[0] != "exist":
-                j = [int(d) for d in j]
-                label_9_list = j
+        with open (csv_label_list) as csv_file_mother_b:
+            csv_reader = csv.reader(csv_file_mother_b, delimiter=',')
+            for i,j in enumerate(csv_reader):
+                if i == 0 and j[0] != "exist":
+                    j = [int(d) for d in j]
+                    label_1_list = j
+                elif i == 1 and j[0] != "exist":
+                    j = [int(d) for d in j]
+                    label_2_list = j
+                elif i == 2 and j[0] != "exist":
+                    j = [int(d) for d in j]
+                    label_3_list = j
+                elif i == 3 and j[0] != "exist":
+                    j = [int(d) for d in j]
+                    label_4_list = j
+                elif i == 4 and j[0] != "exist":
+                    j = [int(d) for d in j]
+                    label_5_list = j
+                elif i == 5 and j[0] != "exist":
+                    j = [int(d) for d in j]
+                    label_6_list = j
+                elif i == 6 and j[0] != "exist":
+                    j = [int(d) for d in j]
+                    label_7_list = j
+                elif i == 7 and j[0] != "exist":
+                    j = [int(d) for d in j]
+                    label_8_list = j
+                elif i == 8 and j[0] != "exist":
+                    j = [int(d) for d in j]
+                    label_9_list = j
 def start_vido1():
     global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a
     if video_file == None:
