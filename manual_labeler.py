@@ -60,7 +60,7 @@ class Application:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Manual Labeler")
-        
+        self.root.protocol("WM_DELETE_WINDOW", disable_event)
         self.first_frame = tk.Frame(self.root, background="#116562", width=400, height = 30)
         self.first_frame.pack()
         self.first_frame.pack_propagate(0)
@@ -94,12 +94,6 @@ class Application:
         self.show_df = tk.Button(self.third_frame_v1, text="Show data frame", command = self.draw_table, background="black", foreground="green")
         self.show_df.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
         
-        self.fourth_frame_v1 = tk.Frame(self.root, background="#116562", width=400, height = 30)
-        self.fourth_frame_v1.pack(side = tk.TOP)
-        self.fourth_frame_v1.pack_propagate(0)
-        
-        self.save_labeled_video = tk.Button(self.fourth_frame_v1, text= "Save labeled video and data frame", command = start_vido3, background="black", foreground="green")
-        self.save_labeled_video.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
     
         self.fifth_frame_v1 = tk.Frame(self.root, background="#116562", width=400, height = 30)
         self.fifth_frame_v1.pack(side = tk.TOP)
@@ -110,12 +104,41 @@ class Application:
         
         self.load_machine_state = tk.Button(self.fifth_frame_v1, text = "Load state from file", command = load_machine_state_fun, background="black", foreground="green")
         self.load_machine_state.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
+        
+        self.sixth_frame = tk.Frame(self.root, background="#116562", width=400, height = 30)
+        self.sixth_frame.pack(side = tk.TOP)
+        self.sixth_frame.pack_propagate(0)
+        
+        self.create_configuration = tk.Button(self.sixth_frame, text = "Create configuration", command = load_machine_state_fun, background="black", foreground="green", width = 19)
+        self.create_configuration.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
+        
+        self.load_configuration = tk.Button(self.sixth_frame, text = "Load configuration", command = load_machine_state_fun, background="black", foreground="green", width = 17)
+        self.load_configuration.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
+        
+        self.fourth_frame_v1 = tk.Frame(self.root, background="#116562", width=400, height = 30)
+        self.fourth_frame_v1.pack(side = tk.TOP)
+        self.fourth_frame_v1.pack_propagate(0)
+        
+        self.save_labeled_video = tk.Button(self.fourth_frame_v1, text= "Save data", command = start_vido3, background="black", foreground="green", width = 5)
+        self.save_labeled_video.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
+        
+        self.close_gui = tk.Button(self.fourth_frame_v1, text= "Exit", command = self.close_gate, background="black", foreground="green")
+        self.close_gui.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
+        
         self.engine = pyttsx3.init()
         self.list_of_voices = ['Hello World', "welcome to the Labeling world", "hello friend", "I wish you fruitful work", "hello user", "I will try my best to help you work", "What a nice day to label something"]
         voices = self.engine.getProperty('voices')
         self.engine.setProperty('voice', voices[1].id)
         self.engine.say(random.choice(self.list_of_voices))
         self.engine.runAndWait()
+    
+    def close_gate(self):
+        msgbox = tk.messagebox.askquestion ('Exit Application','Are you sure you want to exit the application? Unsaved data will be lost',icon = 'warning')
+        if msgbox == "yes":
+            self.root.destroy()
+        else:
+            pass
+    
     def easy_open(self):
         global video_file, available_formats
         video_file = easygui.fileopenbox(title="Select An Video", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
@@ -134,6 +157,7 @@ class Application:
                 messagebox.showinfo("Information box", f'Currently available formats: .flv, .avi, .amv, .mp4, \nformat of your video : {video_format}')
         else:
             messagebox.showerror("Error box", "Video was not loaded")
+    
     def keyboard_settings(self):
         global fps
         self.new_root = tk.Toplevel(self.root)
@@ -296,9 +320,13 @@ class Application:
         global fps
         fps = int(self.x_text.get("1.0", "end-1c"))
         messagebox.showinfo("Information box", f"Value of x changed to {fps} :):):)")
+
 def getFrame(frame_nr):
     global cap
     cap.set(cv2.CAP_PROP_POS_FRAMES, frame_nr)
+
+def disable_event():
+    pass
 
 def key_restart(bool_value, lista_bool, *args):
     for i, j in enumerate(lista_bool):
