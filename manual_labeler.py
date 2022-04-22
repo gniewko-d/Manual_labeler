@@ -15,7 +15,7 @@ from pandastable import Table
 import csv
 import pyttsx3
 import random
-
+from PIL import Image, ImageTk
 
 df_checker = False
 df = None
@@ -33,7 +33,10 @@ fps = 5
 current_label_list = "test1"
 label_list = None
 available_formats = ["flv", "avi", "amv", "mp4"]
-#img = cv2.imread("C:\\Users\\malgo\\Desktop\\python\\video_labeling\\image_v1.png")
+#img = "C:\\Users\\malgo\\Desktop\\python\\video_labeling\\image_v1.png"
+#image = Image.open(img)
+#photo = ImageTk.PhotoImage(image)
+
 label_1_name = f"{None}"
 label_2_name = f"{None}"
 label_3_name = f"{None}"
@@ -43,6 +46,7 @@ label_6_name = f"{None}"
 label_7_name = f"{None}"
 label_8_name = f"{None}"
 label_9_name = f"{None}"
+configruation_title = f"{None}"
 
 label_1_list = []
 label_2_list = []
@@ -61,6 +65,11 @@ class Application:
         self.root = tk.Tk()
         self.root.title("Manual Labeler")
         self.root.protocol("WM_DELETE_WINDOW", disable_event)
+        
+        #self.root_v1 = tk.Tk()
+        #self.root_v1.title("Ad")
+        #img = ImageTk.PhotoImage(Image.open(path))
+        
         self.first_frame = tk.Frame(self.root, background="#116562", width=400, height = 30)
         self.first_frame.pack()
         self.first_frame.pack_propagate(0)
@@ -109,10 +118,10 @@ class Application:
         self.sixth_frame.pack(side = tk.TOP)
         self.sixth_frame.pack_propagate(0)
         
-        self.create_configuration = tk.Button(self.sixth_frame, text = "Create configuration", command = load_machine_state_fun, background="black", foreground="green", width = 19)
+        self.create_configuration = tk.Button(self.sixth_frame, text = "Create configuration", command = self.creat_configuration_fun, background="black", foreground="green", width = 19)
         self.create_configuration.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
         
-        self.load_configuration = tk.Button(self.sixth_frame, text = "Load configuration", command = load_machine_state_fun, background="black", foreground="green", width = 17)
+        self.load_configuration = tk.Button(self.sixth_frame, text = "Load configuration", command = lambda:[load_configuration_fun(), self.label_changer()], background="black", foreground="green", width = 17)
         self.load_configuration.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
         
         self.fourth_frame_v1 = tk.Frame(self.root, background="#116562", width=400, height = 30)
@@ -122,7 +131,7 @@ class Application:
         self.save_labeled_video = tk.Button(self.fourth_frame_v1, text= "Save data", command = start_vido3, background="black", foreground="green", width = 5)
         self.save_labeled_video.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
         
-        self.close_gui = tk.Button(self.fourth_frame_v1, text= "Exit", command = self.close_gate, background="black", foreground="green")
+        self.close_gui = tk.Button(self.fourth_frame_v1, text= "Exit", command = self.close_gate, background="black", foreground="green", activebackground = "white")
         self.close_gui.pack(side=tk.LEFT, padx=1, pady=1, expand=True, fill='both')
         
         self.engine = pyttsx3.init()
@@ -138,6 +147,7 @@ class Application:
             self.root.destroy()
         else:
             pass
+    
     
     def easy_open(self):
         global video_file, available_formats
@@ -283,9 +293,122 @@ class Application:
         self.submit_frame = tk.Frame(self.new_root_2, background= "black")
         self.submit_frame.pack(side = tk.TOP)
         
-        self.submit = tk.Button(self.submit_frame, text = "Submit", command = self.label_changer, foreground="green", background= "black")
+        self.submit = tk.Button(self.submit_frame, text = "Submit", command =  self.label_changer, foreground="green", background= "black")
         self.submit.pack(side = tk.BOTTOM)
-
+    
+    def creat_configuration_fun(self):
+        global label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name, configruation_title
+        self.new_root_4 = tk.Toplevel(self.root, background= "black")
+        self.new_root_4.title("Label_configuration")
+        
+        self.first_frame_v3 = tk.Frame(self.new_root_4, background="black")
+        self.first_frame_v3.pack()
+        
+        self.label_1_v1 = tk.Label(self.first_frame_v3, text = "key_1 label:", foreground="green", background= "black")
+        self.label_1_v1.pack(side=tk.LEFT)
+        
+        self.label_1_v1_text_box = tk.Text(self.first_frame_v3, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
+        self.label_1_v1_text_box.insert(tk.INSERT, label_1_name)
+        self.label_1_v1_text_box.pack(side=tk.LEFT)
+        
+        self.second_frame_v2 = tk.Frame(self.new_root_4, background= "black")
+        self.second_frame_v2.pack(side = tk.TOP)
+        
+        self.label_2_v1 = tk.Label(self.second_frame_v2, text = "key_2 label:", foreground="green", background= "black")
+        self.label_2_v1.pack(side=tk.LEFT)
+        
+        self.label_2_v1_text_box = tk.Text(self.second_frame_v2, height = 1, width = 20, foreground="green", background= "black",insertbackground = "white")
+        self.label_2_v1_text_box.insert(tk.INSERT, label_2_name)
+        self.label_2_v1_text_box.pack(side=tk.LEFT)
+        
+        self.third_frame_v1 = tk.Frame(self.new_root_4, background= "black")
+        self.third_frame_v1.pack(side = tk.TOP)
+        
+        self.label_3_v1 = tk.Label(self.third_frame_v1, text = "key_3 label:", foreground="green", background= "black")
+        self.label_3_v1.pack(side=tk.LEFT)
+        
+        self.label_3_v1_text_box = tk.Text(self.third_frame_v1, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
+        self.label_3_v1_text_box.insert(tk.INSERT, label_3_name)
+        self.label_3_v1_text_box.pack(side=tk.LEFT)
+        
+        self.fourth_frame_v1 = tk.Frame(self.new_root_4, background= "black")
+        self.fourth_frame_v1.pack(side = tk.TOP)
+        
+        self.label_4_v1 = tk.Label(self.fourth_frame_v1, text = "key_4 label:", foreground="green", background= "black")
+        self.label_4_v1.pack(side=tk.LEFT)
+        
+        self.label_4_v1_text_box = tk.Text(self.fourth_frame_v1, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
+        self.label_4_v1_text_box.insert(tk.INSERT, label_4_name)
+        self.label_4_v1_text_box.pack(side=tk.LEFT)
+        
+        self.fifth_frame_v1 = tk.Frame(self.new_root_4, background= "black")
+        self.fifth_frame_v1.pack(side = tk.TOP)
+        
+        self.label_5_v1 = tk.Label(self.fifth_frame_v1, text = "key_5 label:", foreground="green", background= "black")
+        self.label_5_v1.pack(side=tk.LEFT)
+        
+        self.label_5_v1_text_box = tk.Text(self.fifth_frame_v1, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
+        self.label_5_v1_text_box.insert(tk.INSERT, label_5_name)
+        self.label_5_v1_text_box.pack(side=tk.LEFT)
+        
+        self.sixth_frame_v1 = tk.Frame(self.new_root_4, background= "black")
+        self.sixth_frame_v1.pack(side = tk.TOP)
+        
+        self.label_6_v1 = tk.Label(self.sixth_frame_v1, text = "key_6 label:", foreground="green", background= "black")
+        self.label_6_v1.pack(side=tk.LEFT)
+        
+        self.label_6_v1_text_box = tk.Text(self.sixth_frame_v1, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
+        self.label_6_v1_text_box.insert(tk.INSERT, label_6_name)
+        self.label_6_v1_text_box.pack(side=tk.LEFT)
+        
+        self.seventh_frame_v1 = tk.Frame(self.new_root_4, background= "black")
+        self.seventh_frame_v1.pack(side = tk.TOP)
+        
+        self.label_7_v1 = tk.Label(self.seventh_frame_v1, text = "key_7 label:", foreground="green", background= "black")
+        self.label_7_v1.pack(side=tk.LEFT)
+        
+        self.label_7_v1_text_box = tk.Text(self.seventh_frame_v1, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
+        self.label_7_v1_text_box.insert(tk.INSERT, label_7_name)
+        self.label_7_v1_text_box.pack(side=tk.LEFT)
+        
+        
+        self.eighth_frame_v1 = tk.Frame(self.new_root_4, background= "black")
+        self.eighth_frame_v1.pack(side = tk.TOP)
+        
+        self.label_8_v1 = tk.Label(self.eighth_frame_v1, text = "key_8 label:", foreground="green", background= "black")
+        self.label_8_v1.pack(side=tk.LEFT)
+        
+        self.label_8_v1_text_box = tk.Text(self.eighth_frame_v1, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
+        self.label_8_v1_text_box.insert(tk.INSERT, label_8_name)
+        self.label_8_v1_text_box.pack(side=tk.LEFT)
+        
+        self.ninth_frame_v1 = tk.Frame(self.new_root_4, background= "black")
+        self.ninth_frame_v1.pack(side = tk.TOP)
+        
+        self.label_9_v1 = tk.Label(self.ninth_frame_v1, text = "key_9 label:", foreground="green", background= "black")
+        self.label_9_v1.pack(side=tk.LEFT)
+        
+        self.label_9_v1_text_box = tk.Text(self.ninth_frame_v1, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
+        self.label_9_v1_text_box.insert(tk.INSERT, label_9_name)
+        self.label_9_v1_text_box.pack(side=tk.LEFT)
+        
+        self.tenth_frame = tk.Frame(self.new_root_4, background= "black")
+        self.tenth_frame.pack(side = tk.TOP)
+        
+        self.label_10 = tk.Label(self.tenth_frame, text = "Configuration title:", foreground="green", background= "black")
+        self.label_10.pack(side=tk.LEFT, pady=10)
+        
+        self.label_10_text_box = tk.Text(self.tenth_frame, height = 1, width = 20, foreground="green", background= "black", insertbackground = "white")
+        self.label_10_text_box.insert(tk.INSERT, configruation_title)
+        self.label_10_text_box.pack(side=tk.LEFT, pady=15)
+        
+        self.save_v1_frame = tk.Frame(self.new_root_4, background= "black")
+        self.save_v1_frame.pack(side = tk.TOP)
+        
+        self.submit = tk.Button(self.save_v1_frame, text = "Save", command = self.label_configurator_save, foreground="green", background= "black")
+        self.submit.pack(side = tk.BOTTOM)
+        
+    
     def label_changer(self):
         global label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name, label_list
         
@@ -298,9 +421,35 @@ class Application:
         label_7_name = self.label_7_text_box.get("1.0", "end-1c")
         label_8_name = self.label_8_text_box.get("1.0", "end-1c")
         label_9_name = self.label_9_text_box.get("1.0", "end-1c")
+        
         label_list = [label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name]
-        messagebox.showinfo("Information box", "Labels added :):):)")
+        messagebox.showinfo("Information box", "Labels updated")
 
+    def label_configurator_save(self):
+        
+        list_configuration = []
+        list_configuration.append(self.label_1_v1_text_box.get("1.0", "end-1c"))
+        list_configuration.append(self.label_2_v1_text_box.get("1.0", "end-1c"))
+        list_configuration.append(self.label_3_v1_text_box.get("1.0", "end-1c"))
+        list_configuration.append(self.label_4_v1_text_box.get("1.0", "end-1c"))
+        list_configuration.append(self.label_5_v1_text_box.get("1.0", "end-1c"))
+        list_configuration.append(self.label_6_v1_text_box.get("1.0", "end-1c"))
+        list_configuration.append(self.label_7_v1_text_box.get("1.0", "end-1c"))
+        list_configuration.append(self.label_8_v1_text_box.get("1.0", "end-1c"))
+        list_configuration.append(self.label_9_v1_text_box.get("1.0", "end-1c"))
+        list_configuration.append(self.label_10_text_box.get("1.0", "end-1c"))
+        save_file2 = None
+        save_file2 = easygui.diropenbox(msg = "Select folder for a save location", title = "Typical window")
+        if save_file2 == None:
+            messagebox.showerror("Error box", "Folder was not selected, data unsaved")
+        else:
+            save_file2 = save_file2 + "\\" + list_configuration[9] + ".txt"
+            text_for_conf = open(save_file2, "w")
+            for i in list_configuration:
+                text_for_conf.write(i + "\n")
+            text_for_conf.close()
+            messagebox.showinfo("Information box", "Configuration saved :):):)")
+            messagebox.showinfo("Information box", "Do not change the content of created files")
     def draw_table(self):
         global df, df_checker
         
@@ -477,7 +626,7 @@ def run_save_machine_state():
                 mother_list_writer.writerows(mother_list)
  
 def load_machine_state_fun():
-    global df, label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, df_checker
+    global df, label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, df_checker, label_list
     if video_file == None:
         messagebox.showerror("Error box", "Before you load state from file: Upload the video first")
     else:
@@ -512,7 +661,8 @@ def load_machine_state_fun():
             label_8_name = list_of_columns[7]
         if list_of_columns[8] != "None":
             label_9_name = list_of_columns[8]
-    
+        
+        label_list = [label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name]
         messagebox.showinfo("Information box", f"Next, load file named: {video_title[0]}_mother_B")
         csv_label_list = easygui.fileopenbox(title="Select a file", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
     
@@ -788,6 +938,39 @@ def start_vido3():
                 cap.release()
                 out.release()
                 cv2.destroyAllWindows()
+def load_configuration_fun():
+    global df, label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, df_checker,label_list 
+    configuration_labels_v1 = []
+    configuration_loaded = None
+    messagebox.showinfo("Information box", "Load configuration file (.txt)")
+    configuration_loaded = easygui.fileopenbox(title="Select a file", filetypes= ["*.txt"])
+    if configuration_loaded == None:
+            messagebox.showerror("Error box", "Configuration not loaded")
+    else:
+        with open (configuration_loaded) as content:
+            configuration_labels_v1 = content.readlines()
+            for i, j in enumerate(configuration_labels_v1):
+                configuration_labels_v1[i] = j.replace("\n", "")
+        
+        if configuration_labels_v1[0] != "None":
+            label_1_name = configuration_labels_v1[0]
+        if configuration_labels_v1[1] != "None":
+            label_2_name = configuration_labels_v1[1]
+        if configuration_labels_v1[2] != "None":
+            label_3_name = configuration_labels_v1[2]
+        if configuration_labels_v1[3] != "None":
+            label_4_name = configuration_labels_v1[3]
+        if configuration_labels_v1[4] != "None":
+            label_5_name = configuration_labels_v1[4]
+        if configuration_labels_v1[5] != "None":
+            label_6_name = configuration_labels_v1[5]
+        if configuration_labels_v1[6] != "None":
+            label_7_name = configuration_labels_v1[6]
+        if configuration_labels_v1[7] != "None":
+            label_8_name = configuration_labels_v1[7]
+        if configuration_labels_v1[8] != "None":
+            label_9_name = configuration_labels_v1[8]
+        label_list = [label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name]
+        messagebox.showinfo("Information box", "Labels updated")
 video_object = Application()
 video_object.root.mainloop()
-
