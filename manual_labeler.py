@@ -16,6 +16,8 @@ import csv
 import pyttsx3
 import random
 from PIL import Image, ImageTk
+import time
+
 
 df_checker = False
 df = None
@@ -33,9 +35,19 @@ fps = 5
 current_label_list = "test1"
 label_list = None
 available_formats = ["flv", "avi", "amv", "mp4"]
-#img = "C:\\Users\\malgo\\Desktop\\python\\video_labeling\\image_v1.png"
-#image = Image.open(img)
-#photo = ImageTk.PhotoImage(image)
+
+
+
+def advert():
+    root_v1 = tk.Tk()
+    root_v1.title("Ad")
+    img = Image.open("C:\\Users\\malgo\\Desktop\\python\\video_labeling\\image_v1.png")
+    img = ImageTk.PhotoImage(img)
+    label1 = tk.Label(root_v1,image= img, bg = "black")
+    label1.pack()
+    root_v1.after(3000, lambda: root_v1.destroy())
+    root_v1.mainloop()
+advert()
 
 label_1_name = f"{None}"
 label_2_name = f"{None}"
@@ -66,9 +78,6 @@ class Application:
         self.root.title("Manual Labeler")
         self.root.protocol("WM_DELETE_WINDOW", disable_event)
         
-        #self.root_v1 = tk.Tk()
-        #self.root_v1.title("Ad")
-        #img = ImageTk.PhotoImage(Image.open(path))
         
         self.first_frame = tk.Frame(self.root, background="#116562", width=400, height = 30)
         self.first_frame.pack()
@@ -634,68 +643,88 @@ def load_machine_state_fun():
         video_title = video_title[-1].split(".")
         messagebox.showinfo("Information box", f"Load file named: {video_title[0]}_mother_A")
         df_loaded = easygui.fileopenbox(title="Select a file", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
+        
+        df_loaded_checker = df_loaded.split("\\")
+        df_loaded_checker = df_loaded_checker[-1].split(".")
+        
+
+        
         df_loaded = pd.read_excel(df_loaded)
         df_loaded = df_loaded.set_index("Frame No.")
-        df = df_loaded
-        list_of_columns = list(df.columns)
-        list_of_columns = ["None" if "None" in i else i for i in list_of_columns]
-        list_of_columns = ["Frame No." if "Frame No" in i else i for i in list_of_columns]
-        df.columns = list_of_columns
-        list_of_columns = list(df.columns)
-        df_checker = True
-        if list_of_columns[0] != "None":
-            label_1_name = list_of_columns[0]
-        if list_of_columns[1] != "None":
-            label_2_name = list_of_columns[1]
-        if list_of_columns[2] != "None":
-            label_3_name = list_of_columns[2]
-        if list_of_columns[3] != "None":
-            label_4_name = list_of_columns[3]
-        if list_of_columns[4] != "None":
-            label_5_name = list_of_columns[4]
-        if list_of_columns[5] != "None":
-            label_6_name = list_of_columns[5]
-        if list_of_columns[6] != "None":
-            label_7_name = list_of_columns[6]
-        if list_of_columns[7] != "None":
-            label_8_name = list_of_columns[7]
-        if list_of_columns[8] != "None":
-            label_9_name = list_of_columns[8]
+        cap2 = cv2.VideoCapture(video_file)
+        tots2 = int(cap2.get(cv2.CAP_PROP_FRAME_COUNT))
+        cap2.release()
+        if df_loaded_checker[0] == f"{video_title[0]}_mother_A" and tots2 == len(df_loaded):
+            
+            df = df_loaded
+            list_of_columns = list(df.columns)
+            list_of_columns = ["None" if "None" in i else i for i in list_of_columns]
+            list_of_columns = ["Frame No." if "Frame No" in i else i for i in list_of_columns]
+            df.columns = list_of_columns
+            list_of_columns = list(df.columns)
+            df_checker = True
+            if list_of_columns[0] != "None":
+                label_1_name = list_of_columns[0]
+            if list_of_columns[1] != "None":
+                label_2_name = list_of_columns[1]
+            if list_of_columns[2] != "None":
+                label_3_name = list_of_columns[2]
+            if list_of_columns[3] != "None":
+                label_4_name = list_of_columns[3]
+            if list_of_columns[4] != "None":
+                label_5_name = list_of_columns[4]
+            if list_of_columns[5] != "None":
+                label_6_name = list_of_columns[5]
+            if list_of_columns[6] != "None":
+                label_7_name = list_of_columns[6]
+            if list_of_columns[7] != "None":
+                label_8_name = list_of_columns[7]
+            if list_of_columns[8] != "None":
+                label_9_name = list_of_columns[8]
         
-        label_list = [label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name]
-        messagebox.showinfo("Information box", f"Next, load file named: {video_title[0]}_mother_B")
-        csv_label_list = easygui.fileopenbox(title="Select a file", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
+            label_list = [label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name]
+            messagebox.showinfo("Information box", f"Next, load file named: {video_title[0]}_mother_B")
+            csv_label_list = easygui.fileopenbox(title="Select a file", filetypes= ["*.gif", "*.flv", "*.avi", "*.amv", "*.mp4"])
+            csv_label_list_split = csv_label_list.split("\\")
+            csv_label_list_split = csv_label_list_split[-1].split(".")
+            if csv_label_list_split[0] == f"{video_title[0]}_mother_B":
+                with open (csv_label_list) as csv_file_mother_b:
+                    csv_reader = csv.reader(csv_file_mother_b, delimiter=',')
+                    for i,j in enumerate(csv_reader):
+                        if i == 0 and j[0] != "exist":
+                            j = [int(d) for d in j]
+                            label_1_list = j
+                        elif i == 1 and j[0] != "exist":
+                            j = [int(d) for d in j]
+                            label_2_list = j
+                        elif i == 2 and j[0] != "exist":
+                            j = [int(d) for d in j]
+                            label_3_list = j
+                        elif i == 3 and j[0] != "exist":
+                            j = [int(d) for d in j]
+                            label_4_list = j
+                        elif i == 4 and j[0] != "exist":
+                            j = [int(d) for d in j]
+                            label_5_list = j
+                        elif i == 5 and j[0] != "exist":
+                            j = [int(d) for d in j]
+                            label_6_list = j
+                        elif i == 6 and j[0] != "exist":
+                            j = [int(d) for d in j]
+                            label_7_list = j
+                        elif i == 7 and j[0] != "exist":
+                            j = [int(d) for d in j]
+                            label_8_list = j
+                        elif i == 8 and j[0] != "exist":
+                            j = [int(d) for d in j]
+                            label_9_list = j
+                messagebox.showinfo("Information box", "Data and labels loaded")
+            else:
+                messagebox.showerror("Error box", "Wrong file uploaded. Try again")
+        else:
+            messagebox.showerror("Error box", "Wrong file uploaded. Try again")
+            
     
-        with open (csv_label_list) as csv_file_mother_b:
-            csv_reader = csv.reader(csv_file_mother_b, delimiter=',')
-            for i,j in enumerate(csv_reader):
-                if i == 0 and j[0] != "exist":
-                    j = [int(d) for d in j]
-                    label_1_list = j
-                elif i == 1 and j[0] != "exist":
-                    j = [int(d) for d in j]
-                    label_2_list = j
-                elif i == 2 and j[0] != "exist":
-                    j = [int(d) for d in j]
-                    label_3_list = j
-                elif i == 3 and j[0] != "exist":
-                    j = [int(d) for d in j]
-                    label_4_list = j
-                elif i == 4 and j[0] != "exist":
-                    j = [int(d) for d in j]
-                    label_5_list = j
-                elif i == 5 and j[0] != "exist":
-                    j = [int(d) for d in j]
-                    label_6_list = j
-                elif i == 6 and j[0] != "exist":
-                    j = [int(d) for d in j]
-                    label_7_list = j
-                elif i == 7 and j[0] != "exist":
-                    j = [int(d) for d in j]
-                    label_8_list = j
-                elif i == 8 and j[0] != "exist":
-                    j = [int(d) for d in j]
-                    label_9_list = j
 def start_vido1():
     global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a
     if video_file == None:
@@ -972,5 +1001,6 @@ def load_configuration_fun():
             label_9_name = configuration_labels_v1[8]
         label_list = [label_1_name, label_2_name, label_3_name, label_4_name, label_5_name, label_6_name, label_7_name, label_8_name, label_9_name]
         messagebox.showinfo("Information box", "Labels updated")
+
 video_object = Application()
 video_object.root.mainloop()
