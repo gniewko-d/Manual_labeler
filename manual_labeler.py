@@ -491,6 +491,17 @@ def rescale_frame(percent):
         height1 = height * dif
         dim = (int(width1), int(height1))
 
+def video_resolution(resolution):
+    global slow_motion
+    if resolution == 0:
+        slow_motion = 1
+    elif resolution == 1: 
+        slow_motion = 10
+    elif resolution == 2:
+        slow_motion = 100
+    elif resolution == 3:
+        slow_motion = 200
+        
 
 def getFrame(frame_nr):
     global cap
@@ -744,7 +755,7 @@ def load_machine_state_fun():
             
     
 def start_vido1():
-    global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a, width, height, dim
+    global label_1_name, xd, cap, title_window, frameTime, df, fps, key_pressed_list, previous_column, column, frame, df_checker, label_1_list, label_2_list, label_3_list, label_4_list, label_5_list, label_6_list, label_7_list, label_8_list, label_9_list, key_label_controler, label_1_list_key_a, width, height, dim, slow_motion
     if video_file == None:
         messagebox.showerror("Error box", "Upload the video first")
     elif label_list == None:
@@ -759,11 +770,10 @@ def start_vido1():
         print(fps)
         width = float(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         height = float(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        dim = (int(width), int(height))
         cv2.createTrackbar('frame', title_window, 0,int(tots)-1, getFrame)
         cv2.createTrackbar('video size', title_window, 100, 200, rescale_frame)
-        cv2.createTrackbar('video res', title_window, 100, 200, rescale_frame)
-        
+        cv2.createTrackbar('video spped', title_window, 0, 3, video_resolution)
+        slow_motion = 1
         if df_checker == False:
             df = pd.DataFrame(columns = label_list, index = range(1, int(tots) + 1))
             df.index.name="Frame No."
@@ -800,16 +810,17 @@ def start_vido1():
                 elif (current_frames in label_1_list or current_frames in label_2_list or current_frames in label_3_list or current_frames in label_4_list or current_frames in label_5_list or current_frames in label_6_list or current_frames in label_7_list or current_frames in label_8_list or current_frames in label_9_list) and key_label_controler[0] == True:
                     frame1 = cv2.resize(frame, dim, interpolation=cv2.INTER_AREA)
                     cv2.imshow(title_window, frame1)
+                    cv2.waitKey(slow_motion)
                     key_restart(False ,key_label_controler)
-                
+                    
                 else:
-    
+
                     frame1 = cv2.resize(frame, dim, interpolation=cv2.INTER_AREA)
                     cv2.imshow(title_window, frame1)
-
+                    cv2.waitKey(slow_motion)
                 frame1 = cv2.resize(frame, dim, interpolation=cv2.INTER_AREA)
                 cv2.imshow(title_window, frame1)
-                
+                cv2.waitKey(slow_motion)
                 cv2.setTrackbarPos('frame',title_window, int(current_frames))
                 if cv2.waitKey(25) & 0xFF == ord('q'):
                     cap.release()
