@@ -485,12 +485,16 @@ class Application:
 
 def rescale_frame(percent):
     global cap, dim, width, height
-    if percent != 100:
+    if percent != 100 and percent != 0:
         dif = percent/100
         width1 = width * dif
         height1 = height * dif
         dim = (int(width1), int(height1))
-
+    elif percent == 0:
+        dif = 1/100
+        width1 = width * dif
+        height1 = height * dif
+        dim = (int(width1), int(height1))
 def video_resolution(resolution):
     global slow_motion
     if resolution == 0:
@@ -773,6 +777,7 @@ def start_vido1():
         cv2.createTrackbar('frame', title_window, 0,int(tots)-1, getFrame)
         cv2.createTrackbar('video size', title_window, 100, 200, rescale_frame)
         cv2.createTrackbar('video spped', title_window, 0, 3, video_resolution)
+        dim = (int(width), int(height))
         slow_motion = 1
         if df_checker == False:
             df = pd.DataFrame(columns = label_list, index = range(1, int(tots) + 1))
